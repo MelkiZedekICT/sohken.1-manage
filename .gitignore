@@ -1,0 +1,12 @@
+node_modules/
+.cache/
+.sohken/
+.test-data/
+release/
+dist/
+*.log
+config.json
+*.sqlite*
+*.db*
+.env*
+!.env.example

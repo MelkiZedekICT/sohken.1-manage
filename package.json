@@ -1,0 +1,39 @@
+{
+  "name": "sohken-security",
+  "version": "0.1.0-alpha.1",
+  "description": "Local security companion for agents: desktop, extension, terminal and MCP",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "bin": {
+    "sohken": "bin/sohken.mjs"
+  },
+  "scripts": {
+    "start": "node bin/sohken.mjs serve",
+    "test": "node --test tests/*.test.mjs integration/*.test.mjs extension/*.test.mjs",
+    "test:core": "node --test tests/*.test.mjs",
+    "build:sdk": "tsc -p tsconfig.json",
+    "desktop": "electron desktop/main.cjs",
+    "package:desktop": "node scripts/package-desktop.mjs",
+    "package:release": "node scripts/package-release.mjs"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "ui/",
+    "integration/",
+    "sdk/",
+    "README.md",
+    "SECURITY.md",
+    "docs/",
+    "LICENSE"
+  ],
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "@types/node": "24.10.1",
+    "electron": "44.4.1",
+    "typescript": "5.9.3"
+  }
+}

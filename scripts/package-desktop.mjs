@@ -1,0 +1,10 @@
+import {packager} from '@electron/packager';
+import {mkdir,cp,writeFile,readFile} from 'node:fs/promises';
+import path from 'node:path';
+const root=process.cwd(),staging=path.join(root,'.cache','desktop-stage');
+await mkdir(staging,{recursive:true});
+for(const dir of ['src','ui','desktop'])await cp(path.join(root,dir),path.join(staging,dir),{recursive:true});
+const pkg=JSON.parse(await readFile('package.json','utf8'));
+await writeFile(path.join(staging,'package.json'),JSON.stringify({name:pkg.name,version:pkg.version,main:'desktop/main.cjs',type:'module',description:pkg.description,author:'Sohken'},null,2));
+const results=await packager({dir:staging,out:path.join(root,'dist'),name:'Sohken',platform:'win32',arch:'x64',electronVersion:pkg.devDependencies.electron,overwrite:true,asar:true,electronZipDir:path.join(root,'.cache','electron-distribution'),win32metadata:{ProductName:'Sohken',FileDescription:'Local security companion for agents'}});
+console.log(results.join('\n'));

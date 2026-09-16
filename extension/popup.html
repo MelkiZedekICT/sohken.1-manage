@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sohken</title><link rel="stylesheet" href="popup.css"></head>
+<body>
+  <header><div class="brand"><span class="mark" aria-hidden="true">S</span><div><h1>sohken<span> / security</span></h1><p>Your checkpoint before action.</p></div></div><span class="tag">ALPHA</span></header>
+  <main>
+    <div class="mode"><span class="dot"></span> ON-DEMAND · LOCAL BY DEFAULT</div>
+    <h2>Inspect the instruction.</h2><p class="intro">Check a prompt or page for suspicious instructions and possible exposed secrets.</p>
+    <label for="content">Text to inspect</label><textarea id="content" placeholder="Paste a prompt, tool response, or command…" maxlength="64000" spellcheck="false"></textarea>
+    <div class="actions"><button id="scan">Scan text <span aria-hidden="true">↗</span></button><button id="page" class="secondary">Use selection / page</button></div>
+    <p class="hint">Page capture runs only when clicked. Selection takes priority; otherwise visible page text is copied here, excluding form controls. Review before scanning.</p>
+    <details><summary>Connect to local Sohken <span>Optional</span></summary><div class="connection"><label for="token">Agent token</label><input id="token" type="password" autocomplete="off" placeholder="Paste your Sohken agent token"><div class="actions"><button id="pair" class="secondary">Pair this session</button><button id="forget" class="quiet">Disconnect</button></div><label class="check"><input id="remote" type="checkbox"> Send this scan to my local engine</label><p class="hint">Only 127.0.0.1:4317. Pairing is kept in browser session storage. Use an agent token; owner tokens are refused.</p></div></details>
+    <p id="status" role="status" aria-live="polite">Ready. Your text stays here unless you enable local-engine scanning.</p>
+    <section id="result" hidden aria-labelledby="result-title"><div class="result-head"><h2 id="result-title">Inspection result</h2><span id="level" class="tag"></span></div><p id="summary"></p><ul id="findings"></ul></section>
+  </main>
+  <footer>Heuristic checks. This extension does not block other agents or guarantee safe content.</footer>
+  <script type="module" src="popup.mjs"></script>
+</body></html>

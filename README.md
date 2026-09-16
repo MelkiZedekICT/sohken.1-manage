@@ -1,10 +1,9 @@
+<p align="center">
+  <img src="coding-anime-hero-stockcake.jpg" alt="Sohken" width="380"/>
+</p>
+
 <h1 align="center">
-  <code>░██████╗░█████╗░██╗░░██╗██╗░░██╗███████╗███╗░░██╗</code><br/>
-  <code>██╔════╝██╔══██╗██║░░██║██║░██╔╝██╔════╝████╗░██║</code><br/>
-  <code>╚█████╗░██║░░██║███████║█████═╝░█████╗░░██╔██╗██║</code><br/>
-  <code>░╚═══██╗██║░░██║██╔══██║██╔═██╗░██╔══╝░░██║╚████║</code><br/>
-  <code>██████╔╝╚█████╔╝██║░░██║██║░╚██╗███████╗██║░╚███║</code><br/>
-  <code>╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝░░╚══╝</code>
+  <code>S O H K E N</code>
 </h1>
 
 <p align="center">
@@ -13,117 +12,205 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/v0.1.0--alpha.1-ff00ff?style=flat-square&labelColor=1a1a2e&label=version" alt="Version"/>
-  <img src="https://img.shields.io/badge/%3E%3D24-00ffff?style=flat-square&labelColor=1a1a2e&label=node" alt="Node"/>
-  <img src="https://img.shields.io/badge/36%2F36-00ff88?style=flat-square&labelColor=1a1a2e&label=tests" alt="Tests"/>
+  <img src="https://img.shields.io/badge/v0.1.0--alpha.1-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
+  <img src="https://img.shields.io/badge/%3E%3D24-00ffff?style=flat-square&labelColor=0d0d0d&label=node" alt="Node"/>
+  <img src="https://img.shields.io/badge/36%2F36-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
+  <img src="https://img.shields.io/badge/zero-cc66ff?style=flat-square&labelColor=0d0d0d&label=cloud%20deps" alt="Cloud"/>
 </p>
 
----
+<p align="center">
+  <img src="neon-divider.jpg" alt="" width="100%"/>
+</p>
 
-Sohken sits between your agent and the outside world. It scans prompts for injection signals, enforces typed tool policies, binds human approval to exact action digests, and records every decision in a hash-linked audit chain. One engine serves four interfaces — desktop, browser extension, terminal, and MCP — with zero cloud dependencies.
+## What is this
 
-This is a working single-user alpha, not a production firewall. Its enforcement boundary is its fixed local tools. The scanner uses explainable heuristics, not a black-box model.
+Sohken is a **Hermes-inspired security companion** that sits between your AI agent and the real world. It intercepts every tool call, scans for prompt injection, enforces typed policies, and won't let anything dangerous through without your explicit cryptographic approval.
+
+One local engine. Four interfaces. No cloud. No API keys. No paid models.
 
 ```
-Agent ──→ Sohken ──→ Policy check ──→ Approval gate ──→ Tool execution
-                          │                 │                  │
-                          └── deny/allow ───┴── audit ledger ──┘
+Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──→ Execution ──→ Audit ledger
+                     │           │            │                │              │
+                  injection?   allow?     human sign-off   local effect   hash chain
+                  redaction    deny?      digest match     idempotent     HMAC verify
 ```
+
+<br/>
+
+<table>
+<tr>
+<td width="65%">
+
+### The enforcement loop
+
+Every agent action passes through four layers before it touches anything:
+
+1. **Scan** — heuristic detection for injection signals, credential leaks, social engineering patterns. Not ML, not a black box — explainable rules with severity scoring.
+
+2. **Policy** — typed tool contracts. `diagnostics.read` is allowed. `ticket.create` requires your approval. `file.delete` and `network.send` are always denied. Fail-closed.
+
+3. **Approval** — the exact action is hashed (SHA-256). You approve that specific digest. Expires in 10 minutes. Approve ≠ Execute — they're separate steps. Agents can never approve their own requests.
+
+4. **Ledger** — every decision is recorded in a hash-linked SQLite chain with HMAC integrity protection. Export, verify, audit.
+
+</td>
+<td width="35%" align="center">
+
+<img src="looopt.jpg" alt="The security vortex" width="100%"/>
+<br/>
+<sub><em>Every request passes through the vortex.<br/>Nothing gets out unchecked.</em></sub>
+
+</td>
+</tr>
+</table>
+
+<p align="center">
+  <img src="neon-divider.jpg" alt="" width="100%"/>
+</p>
 
 ## Quick start
 
-Requires Node.js 24+. No API keys, cloud accounts, or GPUs.
+Requires Node.js 24+. That's the entire dependency list.
 
 ```sh
+git clone https://github.com/MelkiZedekICT/sohken.1-manage.git
+cd sohken.1-manage
+npm ci
 node bin/sohken.mjs serve
 ```
 
-Open the pairing URL from the terminal. Click **Run safe demo** to generate a scan, a blocked transfer, a diagnostic read, and a ticket for your approval.
+Open the pairing URL from the terminal output. **Treat it like a password.** Click **Run safe demo** in the dashboard — it generates an injection scan, a blocked network transfer, a verified diagnostic read, and a ticket waiting for your approval.
+
+<table>
+<tr>
+<td>
 
 ```sh
-node bin/sohken.mjs scan --text "Ignore previous instructions"
+# Scan text for injection signals
+node bin/sohken.mjs scan --text "Ignore all previous instructions"
+
+# Check engine status
 node bin/sohken.mjs status
+
+# Verify the full audit chain
 node bin/sohken.mjs audit verify
+
+# Export sanitized evidence
 node bin/sohken.mjs export
 ```
 
-State lives in `~/.sohken` by default. Override with `--data-dir` or `SOHKEN_HOME`.
+</td>
+<td width="140" align="center">
 
-## What it enforces
+<img src="download.jpg" width="110"/>
+<br/>
+<sub><em>Ready to run.</em></sub>
 
-- **Scanner** — prompt injection detection, credential redaction, social engineering signals. Heuristic scoring with explainable findings.
-- **Policy engine** — typed tool contracts. `diagnostics.read` → allow. `ticket.create` → require approval. `file.delete`, `network.send` → always deny.
-- **Approval binding** — immutable SHA-256 digest per action. 10-minute expiry. Approval and execution are separate steps. Agents cannot approve their own requests.
-- **Audit ledger** — SQLite WAL with HMAC-protected hash chain. Idempotent local effects. Verified export with integrity check.
-- **Token separation** — owner token controls approval, rejection, and pause. Agent token is limited to scan, propose, and execute.
+</td>
+</tr>
+</table>
 
-## Interfaces
+State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKEN_HOME`.
 
-| Surface | Notes |
-|---|---|
-| **Desktop** | Electron 44. Extract the portable ZIP, launch `Sohken.exe`. Unsigned, no auto-updates. |
-| **Browser extension** | Chrome/Edge Manifest V3. Minimal permissions, explicit capture. Load unpacked from `extension/`. |
-| **Terminal CLI** | `sohken serve`, `scan`, `status`, `audit verify`, `export`. Runs directly with Node or install from tarball. |
-| **MCP** | JSON-RPC stdio adapter with TypeScript SDK. See [integration/](integration/README.md). |
+<p align="center">
+  <img src="neon-divider.jpg" alt="" width="100%"/>
+</p>
+
+## Four surfaces, one engine
+
+| | Surface | What it does |
+|---|---|---|
+| 🖥️ | **Desktop** | Electron 44 app with full dashboard. Extract portable ZIP → launch `Sohken.exe`. Unsigned, no auto-updates. |
+| 🌐 | **Browser Extension** | Chrome/Edge Manifest V3. Minimal permissions, explicit capture, local-only scan engine. Load unpacked from `extension/`. |
+| ⌨️ | **Terminal CLI** | `serve`, `scan`, `status`, `audit verify`, `export`. Direct Node execution or install from release tarball. |
+| 🔌 | **MCP Protocol** | JSON-RPC stdio adapter for Hermes-compatible agents. TypeScript SDK included. See [`integration/`](integration/README.md). |
 
 ## Architecture
 
 ```
 src/
-├── engine.mjs      # Policy, approval, execution, audit — core state machine
-├── scanner.mjs      # Heuristic scan rules and scoring
-└── server.mjs       # Authenticated loopback HTTP API (127.0.0.1:4317)
+├── engine.mjs       # Policy evaluation, approval binding, execution, audit chain
+├── scanner.mjs      # Heuristic injection detection and risk scoring
+└── server.mjs       # Authenticated loopback HTTP API @ 127.0.0.1:4317
 
-bin/sohken.mjs       # CLI entrypoint
-ui/                  # Dashboard — vanilla HTML/CSS/JS, no framework deps
+bin/sohken.mjs       # CLI — serve, scan, status, audit, export
+ui/                  # Dashboard — vanilla HTML/CSS/JS, zero framework deps
 extension/           # Manifest V3 popup with local scanner
 desktop/             # Electron wrapper (contextIsolation, sandbox, no nodeIntegration)
 sdk/                 # TypeScript agent SDK
 integration/         # MCP stdio adapter + integration tests
+tests/               # 36 tests — core, HTTP, CLI/MCP, extension scanner
 ```
 
-The original research proposed Python/PostgreSQL. The downloadable multi-surface requirement led to a deliberate single-runtime pivot — Node 24 with built-in SQLite. Decision rationale in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+> The original research proposed Python/PostgreSQL. The downloadable multi-surface requirement led to a deliberate single-runtime pivot — Node 24 with built-in SQLite, zero external services. Rationale documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Capacity
-
-| Resource | Limit |
-|---|---|
-| Scan text | 64 KB |
-| HTTP body | 100 KB |
-| Rate limit | 240 req/min per role |
-| Scan history | 1,000 |
-| Proposed actions | 1,000 |
-| Audit events | 10,000 / profile |
+<p align="center">
+  <img src="neon-divider.jpg" alt="" width="100%"/>
+</p>
 
 ## Development
 
+<table>
+<tr>
+<td>
+
 ```sh
-npm ci                        # install
-npm test                      # 36 tests — core, HTTP, CLI/MCP, extension
-npm run build:sdk             # compile TypeScript SDK
+npm ci                        # Install
+npm test                      # All 36 tests
+npm run test:core             # Core tests only
+npm run build:sdk             # TypeScript SDK
 npm run desktop               # Electron dev window
-npm run package:desktop       # portable desktop ZIP
-npm run package:release       # full release bundle
+npm run package:desktop       # Portable desktop ZIP
+npm run package:release       # Full release bundle
 ```
+
+Desktop dev requires the Electron runtime download. If npm hasn't fetched it: `node node_modules/electron/install.js`. Package scripts build locally — nothing is published.
+
+</td>
+<td width="280" align="center">
+
+<img src="anime-build-success.jpg" width="260"/>
+<br/>
+<sub><em>36/36. Zero vulnerabilities. Ship it.</em></sub>
+
+</td>
+</tr>
+</table>
 
 ## Threat model
 
-Sohken protects its own local tool adapters and their invocation path. It does **not** protect tools outside its managed set, a compromised OS user, browser memory, or third-party agent configurations. A model with unrestricted terminal access as the owner OS user can bypass Sohken entirely. Read [SECURITY.md](SECURITY.md) before connecting any agent.
+Sohken protects its own fixed local tool adapters and their invocation path. It does **not** protect:
+
+- Tools outside its managed set
+- A compromised OS user or hostile administrator
+- Browser memory or third-party agent configurations
+- Content encrypted in transit by other systems
+
+> ⚠️ A model with unrestricted terminal access as the owner OS user can read the credential file or bypass Sohken entirely. The alpha is not an OS sandbox. Real deployment requires credential separation and external tool mediation.
+
+Read [`SECURITY.md`](SECURITY.md) before connecting any agent.
 
 ## Docs
 
-| | |
+| Document | |
 |---|---|
-| [SECURITY.md](SECURITY.md) | Threat model, token separation, capacity limits |
-| [Architecture](docs/ARCHITECTURE.md) | Stack decisions, module boundaries |
-| [Design](docs/DESIGN.md) | Visual design system |
-| [Validation](docs/VALIDATION.md) | Test evidence, verification report |
-| [Portfolio](docs/PORTFOLIO.md) | Honest project presentation guide |
-| [Build Journal](BUILD_JOURNAL.md) | Live development log |
-
----
+| [`SECURITY.md`](SECURITY.md) | Threat model, token separation, capacity limits |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Stack decisions, module boundaries |
+| [`docs/DESIGN.md`](docs/DESIGN.md) | Visual design system |
+| [`docs/VALIDATION.md`](docs/VALIDATION.md) | Test evidence, verification report |
+| [`docs/PORTFOLIO.md`](docs/PORTFOLIO.md) | Honest project presentation guide |
+| [`BUILD_JOURNAL.md`](BUILD_JOURNAL.md) | Live development log |
 
 <p align="center">
+  <img src="neon-divider.jpg" alt="" width="100%"/>
+</p>
+
+<p align="center">
+  <img src="images.jpg" width="80"/>
+  <br/><br/>
+  <strong><code>SOHKEN</code></strong><br/>
+  <em>Built for deliberate action.</em><br/>
+  <sub>Your agents. Your rules. Your machine.</sub><br/><br/>
   <sub><code>v0.1.0-alpha.1 · local alpha · single owner</code></sub><br/>
-  <sub>No cloud dependency · No paid models · No external attestation claims</sub>
+  <sub>No cloud dependency · No paid models · No attestation claims</sub>
 </p>

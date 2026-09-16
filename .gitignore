@@ -11,12 +11,6 @@ config.json
 .env*
 !.env.example
 
-# Images — local only
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.webp
-*.svg
+# Dashboard screenshots — not ready yet
 docs/screenshots/
-!extension/icon-*.png
+research/*.png

@@ -35,13 +35,13 @@ Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──�
                   redaction    deny?      digest match     idempotent     HMAC verify
 ```
 
-<br/>
+---
+
+## The enforcement loop
 
 <table>
 <tr>
 <td width="65%">
-
-### The enforcement loop
 
 Every agent action passes through four layers before it touches anything:
 
@@ -64,11 +64,13 @@ Every agent action passes through four layers before it touches anything:
 </tr>
 </table>
 
-<p align="center">
-  <img src="neon-divider.jpg" alt="" width="100%"/>
-</p>
+---
 
 ## Quick start
+
+<table>
+<tr>
+<td>
 
 Requires Node.js 24+. That's the entire dependency list.
 
@@ -80,10 +82,6 @@ node bin/sohken.mjs serve
 ```
 
 Open the pairing URL from the terminal output. **Treat it like a password.** Click **Run safe demo** in the dashboard — it generates an injection scan, a blocked network transfer, a verified diagnostic read, and a ticket waiting for your approval.
-
-<table>
-<tr>
-<td>
 
 ```sh
 # Scan text for injection signals
@@ -99,22 +97,25 @@ node bin/sohken.mjs audit verify
 node bin/sohken.mjs export
 ```
 
-</td>
-<td width="140" align="center">
+State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKEN_HOME`.
 
-<img src="download.jpg" width="110"/>
-<br/>
-<sub><em>Ready to run.</em></sub>
+</td>
+<td width="160" align="center" valign="top">
+
+<br/><br/><br/>
+<img src="download.jpg" width="120"/>
+<br/><br/>
+<sub><em>Ready to deploy.</em></sub>
+<br/><br/><br/><br/><br/>
+<img src="chibi-gojo-happy.jpg" width="120"/>
+<br/><br/>
+<sub><em>Scan clean.<br/>All systems go.</em></sub>
 
 </td>
 </tr>
 </table>
 
-State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKEN_HOME`.
-
-<p align="center">
-  <img src="neon-divider.jpg" alt="" width="100%"/>
-</p>
+---
 
 ## Four surfaces, one engine
 
@@ -124,6 +125,8 @@ State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKE
 | 🌐 | **Browser Extension** | Chrome/Edge Manifest V3. Minimal permissions, explicit capture, local-only scan engine. Load unpacked from `extension/`. |
 | ⌨️ | **Terminal CLI** | `serve`, `scan`, `status`, `audit verify`, `export`. Direct Node execution or install from release tarball. |
 | 🔌 | **MCP Protocol** | JSON-RPC stdio adapter for Hermes-compatible agents. TypeScript SDK included. See [`integration/`](integration/README.md). |
+
+---
 
 ## Architecture
 
@@ -144,9 +147,7 @@ tests/               # 36 tests — core, HTTP, CLI/MCP, extension scanner
 
 > The original research proposed Python/PostgreSQL. The downloadable multi-surface requirement led to a deliberate single-runtime pivot — Node 24 with built-in SQLite, zero external services. Rationale documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-<p align="center">
-  <img src="neon-divider.jpg" alt="" width="100%"/>
-</p>
+---
 
 ## Development
 
@@ -177,7 +178,21 @@ Desktop dev requires the Electron runtime download. If npm hasn't fetched it: `n
 </tr>
 </table>
 
+---
+
 ## Threat model
+
+<table>
+<tr>
+<td width="130" align="center" valign="top">
+
+<br/>
+<img src="chibi-gojo-curious.jpg" width="110"/>
+<br/><br/>
+<sub><em>Stay vigilant.</em></sub>
+
+</td>
+<td>
 
 Sohken protects its own fixed local tool adapters and their invocation path. It does **not** protect:
 
@@ -190,6 +205,12 @@ Sohken protects its own fixed local tool adapters and their invocation path. It 
 
 Read [`SECURITY.md`](SECURITY.md) before connecting any agent.
 
+</td>
+</tr>
+</table>
+
+---
+
 ## Docs
 
 | Document | |
@@ -201,9 +222,7 @@ Read [`SECURITY.md`](SECURITY.md) before connecting any agent.
 | [`docs/PORTFOLIO.md`](docs/PORTFOLIO.md) | Honest project presentation guide |
 | [`BUILD_JOURNAL.md`](BUILD_JOURNAL.md) | Live development log |
 
-<p align="center">
-  <img src="neon-divider.jpg" alt="" width="100%"/>
-</p>
+---
 
 <p align="center">
   <img src="images.jpg" width="80"/>

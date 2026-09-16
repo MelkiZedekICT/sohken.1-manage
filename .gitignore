@@ -10,3 +10,13 @@ config.json
 *.db*
 .env*
 !.env.example
+
+# Images — local only
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.svg
+docs/screenshots/
+!extension/icon-*.png

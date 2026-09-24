@@ -10,8 +10,9 @@ execFileSync(process.execPath,['node_modules/typescript/bin/tsc','-p','tsconfig.
 execFileSync(process.execPath,[npmCli,'pack','--ignore-scripts','--cache',path.join(root,'.cache','npm'),'--pack-destination',release],{stdio:'inherit'});
 function zip(source,destination){
  if(process.platform!=='win32')throw new Error('ZIP packaging currently uses PowerShell on Windows.');
- const q=v=>"'"+v.replaceAll("'","''")+"'";
- execFileSync('powershell.exe',['-NoProfile','-NonInteractive','-Command',`Compress-Archive -Path ${q(source)} -DestinationPath ${q(destination)} -Force`],{stdio:'inherit'});
+ const folder=source.endsWith('*')?path.dirname(source):path.dirname(source);
+ const item=source.endsWith('*')?'.':path.basename(source);
+ execFileSync('tar.exe',['-a','-c','-f',destination,'-C',folder,item],{stdio:'inherit'});
 }
 zip(path.join(root,'extension','*'),path.join(release,`sohken-extension-${pkg.version}.zip`));
 const desktop=path.join(root,'dist','Sohken-win32-x64');

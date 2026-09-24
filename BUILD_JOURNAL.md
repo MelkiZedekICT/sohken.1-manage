@@ -38,6 +38,18 @@ Source implementation in progress. No native desktop binary built yet. No extens
 
 Append dated entries for changes and test evidence. Distinguish implemented, tested, packaged and externally validated. Record failed approaches and patches when they affect architecture or security. Never record credentials, pairing tokens or private scanned content here.
 
+## 2026-09-24 — Public launch and simpler language
+
+- Replaced technical labels in the desktop app and browser add-on with plain names: Text check, Review, History, Private app key and Agent key.
+- Built a separate public Sohken page in `web/`. It explains the working limits, includes a browser-only text demo, shows Free and Founder plans, and collects early-access email requests.
+- Founder price is ₹799 once for the first 50 people. Joining the list does not charge anyone; visitors see the private build before any payment request.
+- The public page stores only the submitted email, selected plan, join time and page source. Product text stays in the visitor's browser during the demo.
+- Pricing direction was checked against current public agent-security offers. Sohken stays much lower because this is a local early build with a narrow supported action set.
+- Fixed the release builder to use the Windows archive tool after the PowerShell archive module failed to load. The earlier package-cache permission failure was fixed by moving the cache inside the project.
+- Built all three downloads successfully: Windows app ZIP, browser add-on ZIP and terminal package. A checksum file records each download's size and fingerprint.
+- Re-ran 36 checks successfully. The full desktop flow also passed in a real browser after updating its labels: connect, demo, allow, run, text check, history check, narrow layout and reduced motion.
+- Prepared the public page for AppDeploy using its required starter and private email store. Publication is waiting for explicit approval to share the website source with AppDeploy after the automatic approval check stopped the upload.
+
 ## 2026-09-16 — Sumi visual redesign
 
 - Applied the requested Japanese-inspired palette: charcoal, warm ivory, indigo navigation, sage status and vermilion risk accents.

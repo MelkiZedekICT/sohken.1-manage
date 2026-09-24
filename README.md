@@ -117,6 +117,14 @@ State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKE
 
 ---
 
+## Public page
+
+The `web/` folder is Sohken's public early-access page. It explains the product in plain language, includes a browser-only text check, and shows two plans: Free and Founder. Founder access is ₹799 once for the first 50 people.
+
+Joining the list does not charge anyone. Members see the private build before payment. The page stores only the email they submit, their chosen plan, and the join time. Text entered into the demo stays in the browser.
+
+---
+
 ## Four surfaces, one engine
 
 | | Surface | What it does |

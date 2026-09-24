@@ -10,6 +10,7 @@ config.json
 *.db*
 .env*
 !.env.example
+.appdeploy
 
 # Dashboard screenshots — not ready yet
 docs/screenshots/

@@ -66,6 +66,27 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
+const leaveForm = document.querySelector<HTMLFormElement>('#leave-form')!;
+const leaveStatus = document.querySelector<HTMLParagraphElement>('#leave-status')!;
+leaveForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const email = document.querySelector<HTMLInputElement>('#leave-email')!;
+  const button = leaveForm.querySelector<HTMLButtonElement>('button')!;
+  button.disabled = true;
+  leaveStatus.textContent = 'Removing…';
+  try {
+    const response = await api.post('/api/leave', { email: email.value });
+    leaveStatus.textContent = response.data?.message || 'Your email was removed.';
+    leaveStatus.className = 'success';
+    leaveForm.reset();
+  } catch {
+    leaveStatus.textContent = 'Could not remove the email. Please try again.';
+    leaveStatus.className = 'error';
+  } finally {
+    button.disabled = false;
+  }
+});
+
 const observer = new IntersectionObserver((entries) => {
   for (const entry of entries) if (entry.isIntersecting) entry.target.classList.add('seen');
 }, { threshold: 0.12 });

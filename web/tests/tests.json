@@ -32,5 +32,14 @@
     "qa_faults": [{ "method": "POST", "path": "/api/join", "status": 500, "body_json": { "error": "save_failed" } }],
     "steps": ["Go to Early access", "Enter retry-test@example.com", "Submit the form"],
     "expected": "A visible message says the email could not be saved and asks the visitor to try again."
+  },
+  {
+    "name": "Leave the early-access list",
+    "viewport": "desktop",
+    "covers": ["privacy choice", "remove saved email", "leave API"],
+    "description": "Checks that a visitor can remove a previously submitted email from the early-access list.",
+    "setup": ["Join the Free list with leave-test@example.com"],
+    "steps": ["Go to Privacy", "Enter leave-test@example.com", "Press Leave the list"],
+    "expected": "A message says the email was removed from the list."
   }
 ]

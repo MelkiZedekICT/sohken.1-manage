@@ -80,9 +80,19 @@
       <details><summary>Will I be charged when I join?</summary><p>No. The page only records interest. Founder members see the private build before any payment request.</p></details>
       <details><summary>What works today?</summary><p>The local app can check text, block fixed unsafe actions, ask for approval, and keep a local history. It is an early build.</p></details>
     </section>
+
+    <section class="section legal" id="privacy">
+      <div><p class="overline">PRIVACY</p><h2>Your work stays yours.</h2></div>
+      <div><p>The text demo runs in your browser and is not sent to us. If you join early access, we store only your email, chosen plan, join time, and that you joined from this page.</p><p>We use that information only for Sohken access and product updates. We do not sell it. You can remove your email below.</p><form id="leave-form"><label for="leave-email">Remove my email</label><div class="email-row"><input id="leave-email" type="email" required maxlength="160" autocomplete="email" placeholder="you@example.com"><button class="button quiet" type="submit">Leave the list</button></div><p id="leave-status" role="status"></p></form></div>
+    </section>
+
+    <section class="section legal" id="terms">
+      <div><p class="overline">EARLY ACCESS TERMS</p><h2>Clear limits.</h2></div>
+      <div><p>Sohken is an early test build. It can add useful checks, but it cannot promise that an agent or action is safe. You remain responsible for reviewing important actions.</p><p>This page does not take payment. Founder members receive the private build and payment details first. The price, refund terms, included updates, and support period must be shown again before purchase.</p></div>
+    </section>
   </main>
 
-  <footer><a class="logo" href="#top"><span>S</span>sohken</a><p>Built for deliberate action.</p><p>Independent early build · 2026</p></footer>
+  <footer><a class="logo" href="#top"><span>S</span>sohken</a><p>Built for deliberate action.</p><div class="footer-links"><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div><p>Independent early build · 2026</p></footer>
   <script type="module" src="./src/main.ts"></script>
 </body>
 </html>

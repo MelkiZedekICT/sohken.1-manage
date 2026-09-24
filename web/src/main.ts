@@ -1,16 +1,10 @@
 import './styles.css';
 import { api } from '@appdeploy/client';
+import { inspectText } from './check.js';
 
 const checkText = document.querySelector<HTMLTextAreaElement>('#check-text')!;
 const checkButton = document.querySelector<HTMLButtonElement>('#check-button')!;
 const checkResult = document.querySelector<HTMLDivElement>('#check-result')!;
-
-const rules = [
-  { pattern: /ignore (?:all |any )?(?:earlier|previous|prior) instructions/i, label: 'It tries to replace earlier instructions.' },
-  { pattern: /(?:private key|password|secret|api key|credential)/i, label: 'It may contain or request private information.' },
-  { pattern: /(?:send|upload|post|share).{0,60}(?:outside|external|remote|webhook)/i, label: 'It may send information outside your computer.' },
-  { pattern: /(?:delete everything|remove all|format disk|rm\s+-rf)/i, label: 'It may ask for a harmful action.' },
-];
 
 checkButton.addEventListener('click', () => {
   const text = checkText.value.trim();
@@ -19,7 +13,7 @@ checkButton.addEventListener('click', () => {
     checkResult.innerHTML = '<strong>Add some text first.</strong><p>The check runs only when you press the button.</p>';
     return;
   }
-  const matches = rules.filter((rule) => rule.pattern.test(text));
+  const matches = inspectText(text);
   if (matches.length) {
     checkResult.className = 'check-result danger';
     checkResult.replaceChildren();
@@ -28,7 +22,7 @@ checkButton.addEventListener('click', () => {
     const list = document.createElement('ul');
     for (const match of matches) {
       const item = document.createElement('li');
-      item.textContent = match.label;
+      item.textContent = match;
       list.append(item);
     }
     checkResult.append(title, list);

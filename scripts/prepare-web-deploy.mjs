@@ -38,6 +38,8 @@ const files = [
   { filename: 'index.html', diffs: [{ from: templateIndex, to: await read('index.html') }] },
   { filename: 'src/styles.css', diffs: [{ from: templateStyles, to: await read('src/styles.css') }] },
   { filename: 'src/main.ts', diffs: [{ from: templateMain, to: await read('src/main.ts') }] },
+  { filename: 'src/check.js', content: await read('src/check.js') },
+  { filename: 'src/check.d.ts', content: await read('src/check.d.ts') },
   { filename: 'backend/index.ts', diffs: [{ from: templateBackend, to: await read('backend/index.ts') }] },
   { filename: 'tests/tests.json', content: await read('tests/tests.json') },
 ];

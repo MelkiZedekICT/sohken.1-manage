@@ -49,6 +49,8 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Built all three downloads successfully: Windows app ZIP, browser add-on ZIP and terminal package. A checksum file records each download's size and fingerprint.
 - Re-ran 36 checks successfully. The full desktop flow also passed in a real browser after updating its labels: connect, demo, allow, run, text check, history check, narrow layout and reduced motion.
 - Prepared the public page for AppDeploy using its required starter and private email store. Publication is waiting for explicit approval to share the website source with AppDeploy after the automatic approval check stopped the upload.
+- Added tests for the public text check and a self-service way to remove an early-access email.
+- Added a four-week Founder launch plan with simple goals, a low-cost rule, success numbers, and a checklist to complete before taking payment.
 
 ## 2026-09-16 — Sumi visual redesign
 

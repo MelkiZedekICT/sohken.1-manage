@@ -1,3 +1,15 @@
+---
+title: Sohken - AI Security Engine & Action Firewall
+emoji: 🛡️
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+short_description: Real-time security checkpoint & firewall for tool-using AI agents
+---
+
 <p align="center">
   <img src="coding-anime-hero-stockcake.jpg" alt="Sohken" width="380"/>
 </p>
@@ -12,9 +24,9 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/v0.1.0--alpha.1-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
+  <img src="https://img.shields.io/badge/v0.1.0--alpha.2-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
   <img src="https://img.shields.io/badge/%3E%3D24-00ffff?style=flat-square&labelColor=0d0d0d&label=node" alt="Node"/>
-  <img src="https://img.shields.io/badge/36%2F36-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
+  <img src="https://img.shields.io/badge/49%2F49-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
   <img src="https://img.shields.io/badge/zero-cc66ff?style=flat-square&labelColor=0d0d0d&label=cloud%20deps" alt="Cloud"/>
 </p>
 
@@ -150,7 +162,7 @@ extension/           # Manifest V3 popup with local scanner
 desktop/             # Electron wrapper (contextIsolation, sandbox, no nodeIntegration)
 sdk/                 # TypeScript agent SDK
 integration/         # MCP stdio adapter + integration tests
-tests/               # 36 tests — core, HTTP, CLI/MCP, extension scanner
+tests/               # 49 tests — core, HTTP, CLI/MCP, extension scanner
 ```
 
 > The original research proposed Python/PostgreSQL. The downloadable multi-surface requirement led to a deliberate single-runtime pivot — Node 24 with built-in SQLite, zero external services. Rationale documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
@@ -165,7 +177,7 @@ tests/               # 36 tests — core, HTTP, CLI/MCP, extension scanner
 
 ```sh
 npm ci                        # Install
-npm test                      # All 36 tests
+npm test                      # All 49 tests
 npm run test:core             # Core tests only
 npm run build:sdk             # TypeScript SDK
 npm run desktop               # Electron dev window
@@ -180,7 +192,7 @@ Desktop dev requires the Electron runtime download. If npm hasn't fetched it: `n
 
 <img src="anime-build-success.jpg" width="260"/>
 <br/>
-<sub><em>36/36. Zero vulnerabilities. Ship it.</em></sub>
+<sub><em>49/49. Zero vulnerabilities. Ship it.</em></sub>
 
 </td>
 </tr>
@@ -238,6 +250,6 @@ Read [`SECURITY.md`](SECURITY.md) before connecting any agent.
   <strong><code>SOHKEN</code></strong><br/>
   <em>Built for deliberate action.</em><br/>
   <sub>Your agents. Your rules. Your machine.</sub><br/><br/>
-  <sub><code>v0.1.0-alpha.1 · local alpha · single owner</code></sub><br/>
+  <sub><code>v0.1.0-alpha.2 · local alpha · single owner</code></sub><br/>
   <sub>No cloud dependency · No paid models · No attestation claims</sub>
 </p>

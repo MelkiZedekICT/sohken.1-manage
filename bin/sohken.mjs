@@ -35,7 +35,7 @@ MCP auth: SOHKEN_AGENT_TOKEN, otherwise local agentToken in config.json.
 MCP never offers approve, reject, pause, export, or owner credentials.
 `;
 
-const VALUE_OPTIONS = new Set(['data-dir', 'port', 'text', 'file', 'tool', 'args', 'key', 'digest']);
+const VALUE_OPTIONS = new Set(['data-dir', 'port', 'host', 'text', 'file', 'tool', 'args', 'key', 'digest']);
 export function parseArgs(argv) {
   const positional = [];
   const options = Object.create(null);
@@ -55,7 +55,7 @@ export function parseArgs(argv) {
 }
 
 export function resolveSettings(options = {}, env = process.env) {
-  const portText = String(options.port ?? env.SOHKEN_PORT ?? '4317');
+  const portText = String(options.port ?? env.PORT ?? env.SOHKEN_PORT ?? '4317');
   if (!/^\d{1,5}$/.test(portText)) throw new Error('Port must be an integer from 1 to 65535.');
   const port = Number(portText);
   if (port < 1 || port > 65535) throw new Error('Port must be an integer from 1 to 65535.');
@@ -132,9 +132,10 @@ export async function main(argv = process.argv.slice(2)) {
   if (options.help || command === 'help') { process.stdout.write(HELP); return; }
   const settings = resolveSettings(options);
   if (command === 'serve') {
-    if (subcommand) throw new Error('Usage: sohken serve [--data-dir PATH] [--port PORT]');
+    if (subcommand) throw new Error('Usage: sohken serve [--data-dir PATH] [--port PORT] [--host HOST]');
     const { startServer } = await import('../src/server.mjs');
-    const engine = await startServer({ dataDir: settings.dataDir, port: settings.port });
+    const host = options.host ?? process.env.SOHKEN_HOST ?? process.env.HOST ?? (process.env.SPACE_ID ? '0.0.0.0' : '127.0.0.1');
+    const engine = await startServer({ dataDir: settings.dataDir, port: settings.port, host });
     process.stdout.write(`Sohken is running locally at ${engine.url}\nOpen dashboard (private owner pairing link):\n${engine.url}/#token=${encodeURIComponent(engine.ownerToken)}\nData: ${settings.dataDir}\nPress Ctrl+C to stop.\n`);
     let stopping = false;
     const stop = async () => {

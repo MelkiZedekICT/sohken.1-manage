@@ -66,3 +66,9 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Completed final push of source code changes to GitHub (MelkiZedekICT/sohken.1-manage) branch main.
 - Ensured the repository structure is robust for automated deployments to production environments.
 - The core product features — local security enforcement for desktop, extension, and MCP interfaces — are fully operational.
+
+## 2026-09-30 â€” Local launch
+
+- Started the local Sohken engine from the workspace data folder on port 4317 and opened its private dashboard in Codex.
+- Confirmed the dashboard API responds with version 0.1.0-alpha.1, four available tools, and action handling enabled.
+- The packaged Windows desktop executable exits during Electron startup in this environment (`crashpad_client_win.cc: not connected`). The local engine and dashboard are running; desktop packaging still needs a launch fix.

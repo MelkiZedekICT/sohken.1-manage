@@ -8,3 +8,4 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.section,.join{opacity:1;transform:none}.seen{transition:none}.button{transition:none}}
 
 .legal{border-top:1px solid var(--line);display:grid;grid-template-columns:.8fr 1.2fr;gap:70px}.legal h2{font-size:44px}.legal>div:last-child{color:var(--muted)}.legal form{margin-top:30px}.legal input[type=email]{width:100%;background:#161817;color:var(--paper);border:1px solid #4b534c;border-radius:4px;padding:14px}.footer-links{display:flex;gap:18px;margin-left:auto}.footer-links a{font-size:11px;color:var(--muted)}footer .footer-links+p{margin-left:0}@media(max-width:900px){.legal{grid-template-columns:1fr;gap:25px}}@media(max-width:600px){.footer-links{margin-left:0}}
+.logo span{width:36px;font-size:16px;letter-spacing:-1.4px}

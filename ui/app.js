@@ -2,12 +2,13 @@
 const $ = (id) => document.getElementById(id);
 let token = '';
 try {
-  const fragment = new URLSearchParams(location.hash.slice(1));
-  token = fragment.get('token') || sessionStorage.getItem('sohken-owner') || '';
-  if (fragment.has('token')) history.replaceState(null, '', location.pathname + location.search);
-  if (token) sessionStorage.setItem('sohken-owner', token);
+  if (new URLSearchParams(location.hash.slice(1)).has('token')) history.replaceState(null, '', location.pathname + location.search);
+  sessionStorage.removeItem('sohken-owner');
 } catch { /* Pairing remains available when storage is disabled. */ }
 let state = null;
+let account = null;
+let checkoutReady = false;
+let authMode = 'login';
 let busy = false;
 const labels = { overview: 'Overview', scan: 'Text check', approvals: 'Review', activity: 'History', connect: 'Get Sohken' };
 function node(tag, cls, value) { const n = document.createElement(tag); if (cls) n.className = cls; if (value !== undefined) n.textContent = String(value); return n; }
@@ -18,17 +19,16 @@ function showView(name) {
   document.querySelectorAll('.nav-item').forEach(v => { const active = v.dataset.view === name; v.classList.toggle('active', active); if (active) v.setAttribute('aria-current', 'page'); else v.removeAttribute('aria-current'); });
   $('page-crumb').textContent = labels[name];
   window.scrollTo({top:0,behavior:'instant'});
-  if (name === 'connect' && token) loadDownloads();
+  if (name === 'connect' && (token || account)) { loadDownloads(); refreshPlan(); }
 }
 document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
 document.querySelector('.brand').addEventListener('click', e => { e.preventDefault(); showView('overview'); });
 async function api(path, body, raw = false) {
-  const response = await fetch(path, { method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(15000), cache: 'no-store' });
+  const response = await fetch(path, { method: body === undefined ? 'GET' : 'POST', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(15000), cache: 'no-store', credentials: 'same-origin' });
   if (!response.ok) {
     let message = `Request failed (${response.status})`;
     try { const data = await response.json(); message = typeof data.error === 'string' ? data.error : data.error?.message || data.message || message; } catch { /* Use HTTP status. */ }
-    if (response.status === 401 || response.status === 403) $('pairing').hidden = false;
-    throw new Error(message);
+    const error = new Error(message); error.status = response.status; throw error;
   }
   return raw ? response : response.json();
 }
@@ -100,10 +100,69 @@ function render() {
   events($('recent-events'), recent.slice(0, 4)); events($('all-events'), recent); renderActions(actions); setControls();
 }
 async function refresh() {
-  if (!token) { $('pairing').hidden = false; setControls(); return; }
+  if (!token) {
+    try { const result = await api('/api/auth/me'); account = result.account; renderAccount(); }
+    catch { account = null; renderAccount(); $('auth-screen').hidden = false; $('pairing').hidden = true; setControls(); return; }
+  }
   try { state = await api('/api/state'); $('pairing').hidden = true; render(); }
-  catch (error) { state = null; $('connection').textContent = 'Disconnected'; $('connection').className = 'status neutral'; $('guard-label').textContent = 'ENGINE NOT CONNECTED'; $('guard-title').textContent = 'Connection needs attention.'; $('guard-description').textContent = 'Previously displayed history may be stale. Reconnect to review the current state.'; setControls(); throw error; }
+  catch (error) { if (error.status === 401 && !token) { account = null; renderAccount(); showAuth('Your session ended. Sign in again.'); return; } state = null; $('connection').textContent = 'Disconnected'; $('connection').className = 'status neutral'; $('guard-label').textContent = 'ENGINE NOT CONNECTED'; $('guard-title').textContent = 'Connection needs attention.'; $('guard-description').textContent = 'Previously displayed history may be stale. Reconnect to review the current state.'; setControls(); throw error; }
 }
+function showAuth(message = '') { $('auth-screen').hidden = false; $('auth-status').textContent = message; $('pairing').hidden = true; $('auth-email').focus(); setControls(); }
+function setAuthMode(mode) {
+  authMode = mode;
+  const signup = mode === 'register';
+  $('auth-title').textContent = signup ? 'Make this space yours.' : 'Welcome back.';
+  $('auth-description').textContent = signup ? 'Create an account for your private Sohken workspace.' : 'Sign in to open your protected workspace.';
+  $('auth-submit').textContent = signup ? 'Create account →' : 'Sign in →';
+  $('auth-password').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+  $('auth-password-hint').hidden = !signup;
+  $('auth-password').minLength = signup ? 12 : 1;
+  $('auth-switch').textContent = signup ? 'Already have an account? Sign in' : 'New to Sohken? Create an account';
+  $('auth-status').textContent = '';
+}
+$('auth-switch').addEventListener('click', () => setAuthMode(authMode === 'login' ? 'register' : 'login'));
+$('auth-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const button = $('auth-submit'); button.disabled = true; $('auth-status').textContent = 'Opening your workspace…';
+  try {
+    const result = await api(`/api/auth/${authMode === 'register' ? 'register' : 'login'}`, { email: $('auth-email').value, password: $('auth-password').value });
+    account = result.account; $('auth-password').value = ''; $('auth-screen').hidden = true; await refresh(); renderAccount(); $('main').focus();
+  } catch (error) { $('auth-status').textContent = errorText(error); }
+  finally { button.disabled = false; }
+});
+$('account-button').addEventListener('click', () => { if (account) showView('connect'); else showAuth(); });
+function renderAccount() {
+  $('account-button').textContent = account ? `${account.planName} · ${account.email}` : 'Sign in';
+  $('plan-status').textContent = account ? `${account.planName} · Local on this device` : 'Free · Local on this device';
+  $('plan-title').textContent = account ? account.planName : 'Free';
+  $('plan-description').textContent = account?.plan === 'plus' ? 'Full local history, history export and record checks.' : 'Text checks, reviews and your latest history.';
+  $('plan-status-detail').textContent = account?.plan === 'plus' ? `Plus active${account.plusUntil ? ` until ${new Date(account.plusUntil).toLocaleDateString()}` : ''} · history stays on this device` : `25 recent events · activity stays on this device${account && !checkoutReady ? ' · Plus checkout is being set up' : ''}`;
+  $('verify').textContent = account?.plan === 'plus' ? 'Check history' : 'Check history · Plus';
+  $('export').textContent = account?.plan === 'plus' ? 'Save a copy ↓' : 'Save a copy · Plus';
+  $('upgrade-plan').hidden = !account || account.plan === 'plus';
+  $('upgrade-plan').disabled = Boolean(account && !checkoutReady);
+  $('upgrade-plan').textContent = checkoutReady ? 'Get Plus · ₹199 / month' : 'Plus · checkout not ready';
+  $('refresh-plan').hidden = !account;
+  $('sign-out').hidden = !account;
+}
+async function refreshPlan() {
+  if (!account) return;
+  try { const result = await api('/api/billing/status'); account = result.account; checkoutReady = result.configured; renderAccount(); }
+  catch (error) { notify(errorText(error)); }
+}
+$('refresh-plan').addEventListener('click', refreshPlan);
+$('upgrade-plan').addEventListener('click', async () => {
+  const button = $('upgrade-plan'); button.disabled = true;
+  try { const result = await api('/api/billing/subscribe', {}); window.location.assign(result.url); }
+  catch (error) { notify(errorText(error)); }
+  finally { button.disabled = false; }
+});
+$('sign-out').addEventListener('click', async () => {
+  try { await api('/api/auth/logout', {}); } catch { /* Clear this tab even if the server is unreachable. */ }
+  account = null; token = ''; state = null;
+  try { sessionStorage.removeItem('sohken-owner'); } catch { /* Browser storage may be disabled. */ }
+  renderAccount(); showAuth('You are signed out.');
+});
 $('pair-form').addEventListener('submit', event => { event.preventDefault(); token = $('token').value.trim(); $('token').value = ''; try { sessionStorage.setItem('sohken-owner', token); } catch {} operation(async () => { await refresh(); notify('Sohken is connected.', true); }); });
 $('refresh').addEventListener('click', () => operation(refresh));
 $('disconnect').addEventListener('click', () => { token = ''; state = null; try { sessionStorage.removeItem('sohken-owner'); } catch {} $('pairing').hidden = false; $('connection').textContent = 'Disconnected'; $('connection').className = 'status neutral'; $('guard-label').textContent = 'SOHKEN NOT CONNECTED'; $('guard-title').textContent = 'Check before your agent acts.'; $('guard-description').textContent = 'Connect Sohken to review requests and control supported tools.'; ['metric-scans','metric-blocked','metric-pending','metric-executed'].forEach(id => { $(id).textContent = '—'; }); $('approval-count').textContent = '0'; ['recent-events','all-events','actions-list','scan-result'].forEach(id => empty($(id),'Sohken is disconnected','Connect to see local information.')); $('audit-result').replaceChildren(); $('audit-result').hidden = true; $('downloads-list').textContent = 'Connect Sohken to see downloads.'; setControls(); notify('This tab is disconnected.', true); });
@@ -120,5 +179,6 @@ async function loadDownloads() {
 }
 $('load-downloads').addEventListener('click',loadDownloads);
 setControls();
+renderAccount();
 empty($('recent-events'),'Connect to see history','Sohken keeps the history on this computer.');
 refresh().catch(error => notify(errorText(error)));

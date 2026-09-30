@@ -1,4 +1,4 @@
-const {app,BrowserWindow,dialog}=require('electron');
+const {app,BrowserWindow,dialog,shell}=require('electron');
 const path=require('node:path');
 const os=require('node:os');
 const {pathToFileURL}=require('node:url');
@@ -12,10 +12,10 @@ else {
   try{service=await startServer({dataDir,port:Number(process.env.SOHKEN_PORT||4317),releaseDir:path.join(app.isPackaged?process.resourcesPath:path.join(__dirname,'..'),'release')});}
   catch(error){dialog.showErrorBox('Sohken could not start',error.code==='EADDRINUSE'?'Port 4317 is in use. Stop the terminal engine before opening the desktop app.':error.message);app.quit();return;}
   const window=new BrowserWindow({width:1380,height:920,minWidth:760,minHeight:600,title:'Sohken',backgroundColor:'#0b1117',autoHideMenuBar:true,webPreferences:{nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true}});
-  window.webContents.setWindowOpenHandler(()=>({action:'deny'}));
-  window.webContents.on('will-navigate',(event,url)=>{if(new URL(url).origin!==service.url)event.preventDefault();});
+  window.webContents.setWindowOpenHandler(({url})=>{try{const parsed=new URL(url);if(parsed.protocol==='https:'&&['rzp.io','razorpay.com','www.razorpay.com'].includes(parsed.hostname)){shell.openExternal(url);return {action:'deny'};}}catch{}return {action:'deny'};});
+  window.webContents.on('will-navigate',(event,url)=>{try{const parsed=new URL(url);if(parsed.origin===service.url)return;if(parsed.protocol==='https:'&&['rzp.io','razorpay.com','www.razorpay.com'].includes(parsed.hostname)){event.preventDefault();shell.openExternal(url);return;}}catch{}event.preventDefault();});
   window.webContents.session.setPermissionRequestHandler((_contents,_permission,callback)=>callback(false));
-  await window.loadURL(service.url+'/#token='+encodeURIComponent(service.ownerToken));
+  await window.loadURL(service.url);
  }).catch(e=>{dialog.showErrorBox('Sohken startup failed',e.message);app.quit();});
  app.on('window-all-closed',()=>app.quit());
  let closing=false;

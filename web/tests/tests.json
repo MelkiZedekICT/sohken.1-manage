@@ -1,12 +1,12 @@
 [
   {
-    "name": "Join the Founder list",
+    "name": "Join the Plus list",
     "sanity": true,
     "viewport": "desktop",
-    "covers": ["Founder offer", "email sign-up", "saved early-access request"],
-    "description": "Checks that a visitor can choose Founder access and save a valid email without being charged.",
-    "steps": ["Go to Plans", "Choose Join Founder list", "Enter founder-test@example.com and submit"],
-    "expected": "A message says Founder interest was saved and that the private build comes before payment."
+    "covers": ["Plus offer", "email sign-up", "saved early-access request"],
+    "description": "Checks that a visitor can choose Plus access and save a valid email without being charged.",
+    "steps": ["Go to Plans", "Choose Join the Plus list", "Enter plus-test@example.com and submit"],
+    "expected": "A message says Plus interest was saved and no payment was taken."
   },
   {
     "name": "Check suspicious text on mobile",

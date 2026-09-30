@@ -4,9 +4,11 @@
 
 Desktop and CLI run the same Node server. The browser extension can scan offline or send explicitly selected text to that server. The MCP adapter only forwards agent-scoped requests and exposes no approval capability. Typed SDK clients use the same HTTP boundary. There is no autonomous LLM in this first release; policy and scanning are deterministic.
 
-## SQLite before PostgreSQL
+## SQLite for local accounts
 
-The new local-downloadable requirement makes embedded SQLite a useful first persistence layer. WAL, immediate transactions, uniqueness constraints, HMAC action state and restart tests demonstrate real data-integrity work. Multi-user cloud hosting would justify PostgreSQL and service separation; it is not pretended to be solved by this prototype.
+The local install keeps each account in a separate SQLite profile, and the first account adopts existing activity on that device. This preserves a small setup and private local history. SQLite is suitable for the single-builder pilot. A hosted service with concurrent customers should move account, billing, and activity records to PostgreSQL before scale.
+
+Account sign-in uses salted scrypt password hashes and server-side, revocable sessions in HttpOnly cookies. Razorpay keys stay on the server. Plus access comes only from signed subscription webhooks; the browser cannot set its own plan.
 
 ## Fixed policy before programmable policies
 

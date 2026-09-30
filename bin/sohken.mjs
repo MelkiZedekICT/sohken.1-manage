@@ -28,8 +28,9 @@ Global options:
   --port PORT               Engine port (SOHKEN_PORT or 4317)
 
 Start with: sohken serve
-Then open the dashboard URL printed in that terminal. Treat its pairing link
-like a password. Only tools routed through Sohken are protected.
+Then open the dashboard URL printed in that terminal and create a Free account
+or sign in. The first account keeps any activity already saved on this device.
+Only tools routed through Sohken are protected.
 CLI auth: SOHKEN_TOKEN, otherwise local ownerToken in config.json.
 MCP auth: SOHKEN_AGENT_TOKEN, otherwise local agentToken in config.json.
 MCP never offers approve, reject, pause, export, or owner credentials.
@@ -136,7 +137,7 @@ export async function main(argv = process.argv.slice(2)) {
     const { startServer } = await import('../src/server.mjs');
     const host = options.host ?? process.env.SOHKEN_HOST ?? process.env.HOST ?? (process.env.SPACE_ID ? '0.0.0.0' : '127.0.0.1');
     const engine = await startServer({ dataDir: settings.dataDir, port: settings.port, host });
-    process.stdout.write(`Sohken is running locally at ${engine.url}\nOpen dashboard (private owner pairing link):\n${engine.url}/#token=${encodeURIComponent(engine.ownerToken)}\nData: ${settings.dataDir}\nPress Ctrl+C to stop.\n`);
+    process.stdout.write(`Sohken is running locally at ${engine.url}\nOpen the dashboard and create a Free account or sign in.\nData: ${settings.dataDir}\nPress Ctrl+C to stop.\n`);
     let stopping = false;
     const stop = async () => {
       if (stopping) return;

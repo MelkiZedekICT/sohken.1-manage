@@ -38,7 +38,7 @@ short_description: Real-time security checkpoint & firewall for tool-using AI ag
 
 Sohken is a **Hermes-inspired security companion** that sits between your AI agent and the real world. It intercepts every tool call, scans for prompt injection, enforces typed policies, and won't let anything dangerous through without your explicit cryptographic approval.
 
-One local engine. Four interfaces. No cloud. No API keys. No paid models.
+One local engine. Four interfaces. No model key or paid model is needed.
 
 ```
 Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──→ Execution ──→ Audit ledger
@@ -93,7 +93,7 @@ npm ci
 node bin/sohken.mjs serve
 ```
 
-Open the pairing URL from the terminal output. **Treat it like a password.** Click **Run safe demo** in the dashboard — it generates an injection scan, a blocked network transfer, a verified diagnostic read, and a ticket waiting for your approval.
+Open the dashboard URL from the terminal output and create a Free account or sign in. Click **Run safe demo** — it generates an injection scan, a blocked network transfer, a verified diagnostic read, and a ticket waiting for your approval.
 
 ```sh
 # Scan text for injection signals
@@ -129,11 +129,15 @@ State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKE
 
 ---
 
-## Public page
+## Accounts and plans
 
-The `web/` folder is Sohken's public early-access page. It explains the product in plain language, includes a browser-only text check, and shows two plans: Free and Founder. Founder access is ₹799 once for the first 50 people.
+The dashboard supports account creation and sign-in. Passwords are stored as salted scrypt hashes, sessions use HttpOnly cookies, and each account keeps a separate local history. The first account on an existing installation adopts its current history.
 
-Joining the list does not charge anyone. Members see the private build before payment. The page stores only the email they submit, their chosen plan, and the join time. Text entered into the demo stays in the browser.
+Free includes text checks, reviews, the latest 25 activity entries, browser add-on, and terminal tool. Plus is ₹199/month and adds the full activity view, history export, and history integrity checks. Access turns on only after Sohken verifies a Razorpay subscription event. The public page in `web/` explains these plans and collects early-access interest; it does not charge visitors.
+
+For billing, create a ₹199 monthly INR plan in Razorpay and set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_PLAN_ID`, and `RAZORPAY_WEBHOOK_SECRET` on the server that receives customer requests. Point Razorpay's public HTTPS webhook to `/api/payments/razorpay/webhook` and subscribe it to subscription activation, charge, resume, pause, cancel, halt, and completion events. Never put merchant credentials in desktop builds, browser code, or checked-in files. For a hosted deployment set `SOHKEN_SECURE_COOKIES=true` and use HTTPS with persistent storage.
+
+This is an early account and billing layer. Email verification, password recovery, customer self-service cancellation, and hosted account access across separate desktop installations still need to be completed before a public paid launch.
 
 ---
 
@@ -250,6 +254,6 @@ Read [`SECURITY.md`](SECURITY.md) before connecting any agent.
   <strong><code>SOHKEN</code></strong><br/>
   <em>Built for deliberate action.</em><br/>
   <sub>Your agents. Your rules. Your machine.</sub><br/><br/>
-  <sub><code>v0.1.0-alpha.2 · local alpha · single owner</code></sub><br/>
+  <sub><code>v0.1.0-alpha.2 · local alpha · per-account history</code></sub><br/>
   <sub>No cloud dependency · No paid models · No attestation claims</sub>
 </p>

@@ -32,7 +32,7 @@ checkButton.addEventListener('click', () => {
   }
 });
 
-document.querySelectorAll<HTMLAnchorElement>('[data-plan="Founder"]').forEach((link) => {
+document.querySelectorAll<HTMLAnchorElement>('[data-plan="Plus"]').forEach((link) => {
   link.addEventListener('click', () => {
     document.querySelector<HTMLInputElement>('#founder')!.checked = true;
   });
@@ -51,7 +51,7 @@ form.addEventListener('submit', async (event) => {
   try {
     const response = await api.post('/api/join', {
       email: email.value,
-      plan: founder.checked ? 'founder' : 'free',
+      plan: founder.checked ? 'plus' : 'free',
       website: website.value,
     });
     status.textContent = response.data?.message || 'You’re on the list. We’ll be in touch.';

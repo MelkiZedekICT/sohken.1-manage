@@ -72,3 +72,12 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Started the local Sohken engine from the workspace data folder on port 4317 and opened its private dashboard in Codex.
 - Confirmed the dashboard API responds with version 0.1.0-alpha.1, four available tools, and action handling enabled.
 - The packaged Windows desktop executable exits during Electron startup in this environment (`crashpad_client_win.cc: not connected`). The local engine and dashboard are running; desktop packaging still needs a launch fix.
+
+## 2026-09-30 — Accounts and Plus plan
+
+- Added local account registration, sign-in, sign-out, per-account history and 30-day sessions. Passwords use salted scrypt hashes; session tokens are stored as hashes.
+- Replaced the remaining product mark with Sn and added a matching favicon. The dashboard now shows the account plan and gated Plus controls.
+- Set Free and Plus pricing to ₹199/month. Full history, audit checks and exports are Plus features; the first 25 events remain free.
+- Added a Razorpay subscription checkout path and verified, idempotent webhook handling. Checkout requires an HTTPS public origin and merchant credentials; local runs do not accept payment or unlock Plus from the browser alone.
+- Added product and market research, setup notes, architecture/security notes and an environment template. This alpha still needs production identity features such as email verification, password recovery and account deletion before a public paid launch.
+- Validation: Node syntax checks passed for the changed server, account, UI, desktop and CLI code; `git diff --check` passed; local dashboard returned HTTP 200. No automated suite run in this pass.

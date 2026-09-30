@@ -1,8 +1,8 @@
-# Sohken Founder launch
+# Sohken launch plan
 
 ## Goal
 
-Find 50 people who use AI agents and want a clear check before risky actions. Learn what they need before building team features.
+Find the first 50 people who use AI agents and want a clear check before risky actions. Learn what they need before building team features.
 
 ## Offer
 
@@ -13,24 +13,23 @@ Find 50 people who use AI agents and want a clear check before risky actions. Le
 - Browser add-on
 - Terminal tool
 
-### Founder — ₹799 once
+### Plus — ₹199/month
 
 - Everything in Free
-- Windows desktop app
-- Early builds
-- Direct feedback access
+- Full activity history
+- Downloadable evidence
+- History integrity check
 
-The page does not collect payment. A Founder sees the private build, price, refund terms, included updates, and support period again before paying.
+The public page records interest only. Payment uses a hosted Razorpay subscription page after the server is configured. Plus turns on only after Sohken validates the matching signed payment event.
 
 ## Why this price
 
-Public agent-security products commonly begin around $15 to $39 per month for individual builders. Sohken is earlier and supports a smaller set of actions, so a low one-time Founder price is more honest.
+Permit Agent Security lists a free community plan and Pro starting at US$25/month. Sohken supports a much smaller set of actions, so ₹199/month is an individual-builder entry price rather than a like-for-like enterprise comparison.
 
 Sources checked on 24 September 2026:
 
-- Prismor: https://www.prismor.dev/pricing
-- AgentShield: https://agentshield.ai/
-- zn: https://www.usezn.com/
+- Permit Agent Security: https://agent.security/pricing
+- OWASP Agentic Applications: https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security/
 
 ## First four weeks
 
@@ -47,11 +46,11 @@ Sources checked on 24 September 2026:
 - Record which checks help and which warnings feel noisy.
 - Do not add a new tool until at least three people ask for the same one.
 
-### Week 3 — Open Founder access
+### Week 3 — Open Plus access
 
-- Send the private Windows build to interested people.
-- Give each person the full terms before payment.
-- Use a hosted payment page from a known provider; never collect card details in Sohken.
+- Configure the ₹199 monthly Razorpay plan and public webhook on the hosted server.
+- Show the price, renewal, cancellation, and refund terms before checkout.
+- Use Razorpay's hosted payment page; Sohken never collects card details.
 
 ### Week 4 — Decide what earns payment
 
@@ -66,20 +65,20 @@ Sources checked on 24 September 2026:
 - People who join early access
 - People who install a build
 - People who use it again after seven days
-- Founder payments and refunds
+- Plus subscriptions, cancellations, and refunds
 - Warnings people mark as unhelpful
 
 The key number is repeat use after seven days. Sign-ups without repeat use do not prove the product is valuable.
 
 ## Costs
 
-Keep the public page and email list on a free plan while traffic is small. The local app has no model bill. Buy a domain only after the live page works. Add paid services only when Founder income covers them.
+Keep the public page and email list on a free plan while traffic is small. The local app has no model bill. Buy a domain only after the public account service is ready. Add paid services only when early revenue covers them.
 
 ## Before accepting money
 
-- Choose the exact update and support period.
-- Write the refund rule in plain language.
-- Connect a hosted payment page.
+- Finish email verification and password recovery.
+- Write cancellation and refund rules in plain language.
+- Configure hosted checkout and a signed public webhook.
 - Make the privacy and terms text reachable from every purchase button.
 - Test purchase, receipt, download, refund, and email removal.
 - Keep an export of customers and consent records.

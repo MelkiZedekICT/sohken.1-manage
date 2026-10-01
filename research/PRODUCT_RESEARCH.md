@@ -23,6 +23,12 @@ The MCP specification is still evolving. Its official [July 2026 update](https:/
 
 The server checks Plus access on the full-history, export, and integrity endpoints. It never trusts a price sent by the browser. Razorpay runs the hosted subscription page; only a signature-verified server webhook can grant the Plus plan. The payment flow is deliberately inactive until the operator configures a monthly INR 199 plan, merchant keys, and a public HTTPS webhook.
 
+## Security case workflow
+
+The new **Cases** workspace adapts familiar issue-tracker patterns to security operations: a triage list, status and priority, labels, text search, and a board grouped by status. A user can open a case directly or turn a recorded activity entry into a case with a source reference. Case records stay in local SQLite and are isolated by signed-in account. The first release deliberately omits teams, public sharing, notifications, integrations, estimates, and automated assignment; those features would add hosted data and account complexity without helping the solo local workflow yet.
+
+This design follows the interaction patterns documented by Linear: [filters](https://linear.app/docs/filters) narrow a working set, [board layout](https://linear.app/docs/board-layout) groups work by status, and [priority](https://linear.app/docs/priority) stays small and legible. Sohken uses those patterns for security cases rather than copying Linear's product or visual identity.
+
 ## Account and payment safety
 
 - Passwords use a unique salt and slow scrypt derivation. OWASP recommends slow, salted password hashing and lists scrypt as a fallback when Argon2id is unavailable in the runtime ([Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)).

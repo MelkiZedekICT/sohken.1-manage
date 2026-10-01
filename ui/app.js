@@ -10,7 +10,9 @@ let account = null;
 let checkoutReady = false;
 let authMode = 'login';
 let busy = false;
-const labels = { overview: 'Overview', scan: 'Text check', approvals: 'Review', activity: 'History', connect: 'Get Sohken' };
+const labels = { overview: 'Overview', scan: 'Text check', approvals: 'Review', cases: 'Cases', activity: 'History', connect: 'Get Sohken' };
+let caseItems = [];
+let caseLayout = 'list';
 function node(tag, cls, value) { const n = document.createElement(tag); if (cls) n.className = cls; if (value !== undefined) n.textContent = String(value); return n; }
 function notify(message, good = false) { $('notice').textContent = message; $('notice').classList.toggle('good', good); $('notice').hidden = false; }
 function showView(name) {
@@ -20,11 +22,12 @@ function showView(name) {
   $('page-crumb').textContent = labels[name];
   window.scrollTo({top:0,behavior:'instant'});
   if (name === 'connect' && (token || account)) { loadDownloads(); refreshPlan(); }
+  if (name === 'cases' && account) loadCases();
 }
 document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
 document.querySelector('.brand').addEventListener('click', e => { e.preventDefault(); showView('overview'); });
-async function api(path, body, raw = false) {
-  const response = await fetch(path, { method: body === undefined ? 'GET' : 'POST', headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(15000), cache: 'no-store', credentials: 'same-origin' });
+async function api(path, body, raw = false, methodOverride) {
+  const response = await fetch(path, { method: methodOverride || (body === undefined ? 'GET' : 'POST'), headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(15000), cache: 'no-store', credentials: 'same-origin' });
   if (!response.ok) {
     let message = `Request failed (${response.status})`;
     try { const data = await response.json(); message = typeof data.error === 'string' ? data.error : data.error?.message || data.message || message; } catch { /* Use HTTP status. */ }
@@ -57,6 +60,7 @@ function events(target, items) {
       body.append(disclosure);
     }
     const stamp = node('time', '', time(event.createdAt || event.timestamp || event.at));
+    if (account) { const makeCase = node('button', 'text-button event-case', 'Create case'); makeCase.type = 'button'; makeCase.addEventListener('click', () => openCaseComposer({ title: friendly(event.type || event.kind || 'Security event'), description: `${description}${event.id || event.seq ? `\n\nEvent reference: ${event.id || event.seq}` : ''}`, sourceEventId: String(event.id || event.seq || '') })); body.append(makeCase); }
     row.append(node('span', 'event-icon', '·'), body, stamp); target.append(row);
   }
 }
@@ -99,12 +103,69 @@ function render() {
   const recent = [...history].sort((a,b) => new Date(b.createdAt || b.timestamp || b.at || 0) - new Date(a.createdAt || a.timestamp || a.at || 0));
   events($('recent-events'), recent.slice(0, 4)); events($('all-events'), recent); renderActions(actions); setControls();
 }
+function openCaseComposer(prefill = {}) {
+  $('case-composer').hidden = false;
+  $('case-title').value = String(prefill.title || '').slice(0, 160);
+  $('case-description').value = String(prefill.description || '').slice(0, 8000);
+  $('case-priority').value = 'none'; $('case-labels').value = '';
+  $('case-source').value = String(prefill.sourceEventId || '');
+  showView('cases'); $('case-title').focus();
+}
+function caseCard(item) {
+  const card = node('article', 'case-card'); card.dataset.priority = item.priority; card.dataset.status = item.status;
+  const head = node('div', 'case-card-head'); head.append(node('span', 'case-key', `SN-${item.id.slice(0, 6).toUpperCase()}`), node('span', `case-priority priority-${item.priority}`, item.priority === 'none' ? 'No priority' : friendly(item.priority)));
+  card.append(head, node('h2', 'case-title', item.title));
+  if (item.description) card.append(node('p', 'case-description', item.description));
+  if (item.labels.length) { const labels = node('div', 'case-labels'); for (const label of item.labels) labels.append(node('span', 'case-label', label)); card.append(labels); }
+  if (item.sourceEventId) card.append(node('p', 'case-source', `Linked to activity ${item.sourceEventId.slice(0, 12)}`));
+  const controls = node('div', 'case-controls');
+  const status = document.createElement('select'); status.setAttribute('aria-label', `Status for ${item.title}`); for (const [value, text] of [['open','Open'],['in_progress','In progress'],['resolved','Resolved']]) { const option = document.createElement('option'); option.value = value; option.textContent = text; status.append(option); } status.value = item.status;
+  status.addEventListener('change', () => updateCase(item.id, { status: status.value }));
+  const priority = document.createElement('select'); priority.setAttribute('aria-label', `Priority for ${item.title}`); for (const [value, text] of [['none','No priority'],['low','Low'],['medium','Medium'],['high','High'],['urgent','Urgent']]) { const option = document.createElement('option'); option.value = value; option.textContent = text; priority.append(option); } priority.value = item.priority;
+  priority.addEventListener('change', () => updateCase(item.id, { priority: priority.value }));
+  controls.append(status, priority, node('time', 'case-updated', time(item.updatedAt))); card.append(controls); return card;
+}
+function renderCases() {
+  const query = $('case-search').value.trim().toLowerCase(), filter = $('case-filter').value;
+  const visible = caseItems.filter(item => (!filter || filter === 'all' || item.status === filter) && (!query || `${item.title} ${item.description} ${item.labels.join(' ')}`.toLowerCase().includes(query)));
+  $('case-count').textContent = String(caseItems.filter(item => item.status !== 'resolved').length);
+  const list = $('case-list'), board = $('case-board'); list.replaceChildren(); board.replaceChildren();
+  list.hidden = caseLayout !== 'list'; board.hidden = caseLayout !== 'board';
+  if (!visible.length) { empty(list, caseItems.length ? 'No matching cases' : 'No cases yet', caseItems.length ? 'Change the search or status filter.' : 'Create a case or turn an activity item into one.'); return; }
+  if (caseLayout === 'list') { for (const item of visible) list.append(caseCard(item)); return; }
+  for (const [status, title] of [['open','Open'],['in_progress','In progress'],['resolved','Resolved']]) {
+    if (filter !== 'all' && filter !== status) continue;
+    const column = node('section', 'case-column'); const heading = node('div', 'case-column-heading'); heading.append(node('h2', '', title), node('span', 'tag', String(visible.filter(item => item.status === status).length))); column.append(heading);
+    const items = visible.filter(item => item.status === status); if (!items.length) column.append(node('p', 'case-column-empty', 'Nothing here yet.'));
+    for (const item of items) column.append(caseCard(item)); board.append(column);
+  }
+}
+async function loadCases() {
+  if (!account) return;
+  try { caseItems = (await api('/api/cases')).cases; renderCases(); }
+  catch (error) { if (error.status !== 401) notify(errorText(error)); }
+}
+async function updateCase(id, changes) {
+  try { const result = await api(`/api/cases/${encodeURIComponent(id)}`, changes, false, 'PATCH'); caseItems = caseItems.map(item => item.id === id ? result.case : item); renderCases(); }
+  catch (error) { notify(errorText(error)); renderCases(); }
+}
+$('new-case').addEventListener('click', () => openCaseComposer());
+$('cancel-case').addEventListener('click', () => { $('case-composer').hidden = true; $('case-form').reset(); });
+$('case-form').addEventListener('submit', async event => {
+  event.preventDefault(); const button = $('case-form').querySelector('[type="submit"]'); button.disabled = true;
+  try {
+    const result = await api('/api/cases', { title: $('case-title').value, description: $('case-description').value, priority: $('case-priority').value, labels: $('case-labels').value.split(',').map(value => value.trim()).filter(Boolean), sourceEventId: $('case-source').value || null });
+    caseItems.unshift(result.case); $('case-form').reset(); $('case-composer').hidden = true; renderCases(); notify('Case created. Your security work stays on this device.', true);
+  } catch (error) { notify(errorText(error)); } finally { button.disabled = false; }
+});
+$('case-search').addEventListener('input', renderCases); $('case-filter').addEventListener('change', renderCases);
+for (const [id, layout] of [['case-list-mode','list'],['case-board-mode','board']]) $(id).addEventListener('click', () => { caseLayout = layout; $('case-list-mode').classList.toggle('active', layout === 'list'); $('case-board-mode').classList.toggle('active', layout === 'board'); $('case-list-mode').setAttribute('aria-pressed', String(layout === 'list')); $('case-board-mode').setAttribute('aria-pressed', String(layout === 'board')); renderCases(); });
 async function refresh() {
   if (!token) {
     try { const result = await api('/api/auth/me'); account = result.account; renderAccount(); }
     catch { account = null; renderAccount(); $('auth-screen').hidden = false; $('pairing').hidden = true; setControls(); return; }
   }
-  try { state = await api('/api/state'); $('pairing').hidden = true; render(); }
+  try { state = await api('/api/state'); $('pairing').hidden = true; render(); if (account) await loadCases(); }
   catch (error) { if (error.status === 401 && !token) { account = null; renderAccount(); showAuth('Your session ended. Sign in again.'); return; } state = null; $('connection').textContent = 'Disconnected'; $('connection').className = 'status neutral'; $('guard-label').textContent = 'ENGINE NOT CONNECTED'; $('guard-title').textContent = 'Connection needs attention.'; $('guard-description').textContent = 'Previously displayed history may be stale. Reconnect to review the current state.'; setControls(); throw error; }
 }
 function showAuth(message = '') { $('auth-screen').hidden = false; $('auth-status').textContent = message; $('pairing').hidden = true; $('auth-email').focus(); setControls(); }
@@ -159,7 +220,7 @@ $('upgrade-plan').addEventListener('click', async () => {
 });
 $('sign-out').addEventListener('click', async () => {
   try { await api('/api/auth/logout', {}); } catch { /* Clear this tab even if the server is unreachable. */ }
-  account = null; token = ''; state = null;
+  account = null; token = ''; state = null; caseItems = []; renderCases();
   try { sessionStorage.removeItem('sohken-owner'); } catch { /* Browser storage may be disabled. */ }
   renderAccount(); showAuth('You are signed out.');
 });

@@ -1,11 +1,12 @@
 import http from 'node:http';
-import { createHash } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
 import { readFileSync, readdirSync, lstatSync, createReadStream } from 'node:fs';
 import { Engine, EngineError, initConfig, object } from './engine.mjs';
 import { AccountStore, parseCookies, sessionCookie, signatureMatches } from './accounts.mjs';
+import { CaseStore } from './cases.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export function parseStrictJSON(text) {
@@ -34,7 +35,7 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
         if (!['http:', 'https:'].includes(parsed.protocol) || parsed.origin !== publicOrigin || (remoteMode && parsed.protocol !== 'https:')) throw new Error('SOHKEN_PUBLIC_ORIGIN must be an exact origin; public deployments must use HTTPS.');
     }
     const billingReady = remoteMode && Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && process.env.RAZORPAY_PLAN_ID && process.env.RAZORPAY_WEBHOOK_SECRET);
-    const config = initConfig(dataDir), engine = new Engine({ dataDir, config }), accounts = new AccountStore(dataDir, engine); let origin; const rate = new Map();
+    const config = initConfig(dataDir), engine = new Engine({ dataDir, config }), accounts = new AccountStore(dataDir, engine), cases = new CaseStore(dataDir); let origin; const rate = new Map();
     const startedAt = Date.now();
     const counters = { requests: 0, auth_failures: 0, rate_limited: 0, scans: 0, proposals: 0, approvals: 0, rejections: 0, executions: 0, errors: 0 };
     // Pre-auth connection-level rate limit: 60 failed auth attempts per minute per socket IP triggers a 30s lockout.
@@ -112,6 +113,7 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
             const isPlus = Boolean(account?.plan === 'plus');
             const downloads = () => { try { return readdirSync(releaseDir).filter(name => /^sohken-[a-zA-Z0-9._-]+\.(?:zip|tgz|json|txt)$/.test(name)).flatMap(name => { const s = lstatSync(path.join(releaseDir, name)); return s.isFile() && !s.isSymbolicLink() ? [{ name, size: s.size, url: '/downloads/' + name }] : []; }); } catch { return []; } };
             if (req.method === 'GET') {
+                if (p === '/api/cases') { accountOnly(); return json(res, 200, { cases: cases.list(userSession.accountId, url.searchParams.get('status') || '') }); }
                 if (p === '/api/state') { owner(); const state = requestEngine.state(); if (account && !isPlus) state.events = state.events.slice(0, 25); return json(res, 200, state); }
                 if (p === '/api/status') { const { version, mode, paused, stats, tools, policy } = requestEngine.state(); return json(res, 200, { version, mode, paused, stats, tools, policy }); }
                 if (p === '/api/metrics') { owner(); const s = requestEngine.state(); return json(res, 200, { uptime_ms: Date.now() - startedAt, counters, engine: { actions: s.stats.actions, blocked: s.stats.blocked, pending: s.stats.pending, verified: s.stats.verified, scans: s.stats.scans }, audit: requestEngine.verify(), rate_buckets: rate.size, conn_rate_entries: connRate.size }); }
@@ -123,8 +125,11 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
                 if (/^\/api\/actions\/[a-f0-9-]{36}$/.test(p)) return json(res, 200, requestEngine.getAction(p.split('/')[3]));
                 if (p.startsWith('/downloads/')) { owner(); const name = p.slice('/downloads/'.length); if (!downloads().some(d => d.name === name)) throw new EngineError('Download not found.', 404); res.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Disposition': `attachment; filename="${name}"` }); createReadStream(path.join(releaseDir, name)).pipe(res); return; }
             }
-            if (req.method === 'POST') {
+            if (req.method === 'POST' || req.method === 'PATCH') {
                 const input = await readBody(req);
+                if (p === '/api/cases' && req.method === 'POST') { accountOnly(); return json(res, 201, { case: cases.create(userSession.accountId, input) }); }
+                const caseMatch = /^\/api\/cases\/([a-f0-9-]{36})$/.exec(p);
+                if (caseMatch && req.method === 'PATCH') { accountOnly(); return json(res, 200, { case: cases.update(userSession.accountId, caseMatch[1], input) }); }
                 if (p === '/api/billing/subscribe') {
                     accountOnly(); object(input, []);
                     const key = process.env.RAZORPAY_KEY_ID, secret = process.env.RAZORPAY_KEY_SECRET, planId = process.env.RAZORPAY_PLAN_ID;
@@ -151,5 +156,5 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
     });
     server.requestTimeout = 10000; server.headersTimeout = 10000; server.maxHeadersCount = 30;
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, host, resolve); }); const bindHost = host === '0.0.0.0' ? '127.0.0.1' : host; origin = publicOrigin || `http://${bindHost}:${server.address().port}`;
-    return { server, url: origin, ...config, engine, counters, close: () => new Promise(resolve => { clearInterval(connEvict); server.close(() => { accounts.close(); engine.close(); resolve(); }); server.closeIdleConnections(); }) };
+    return { server, url: origin, ...config, engine, counters, close: () => new Promise(resolve => { clearInterval(connEvict); server.close(() => { cases.close(); accounts.close(); engine.close(); resolve(); }); server.closeIdleConnections(); }) };
 }

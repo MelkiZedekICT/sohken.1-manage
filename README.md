@@ -40,6 +40,8 @@ Sohken is a **Hermes-inspired security companion** that sits between your AI age
 
 One local engine. Four interfaces. No model key or paid model is needed.
 
+The dashboard also includes a private **Cases** workspace: move a security finding from activity into an open, in-progress or resolved case, set priority and labels, then find it in a searchable list or status board. Cases remain on the device and are separated by account.
+
 ```
 Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──→ Execution ──→ Audit ledger
                      │           │            │                │              │

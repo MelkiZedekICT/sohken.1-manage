@@ -81,3 +81,12 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Added a Razorpay subscription checkout path and verified, idempotent webhook handling. Checkout requires an HTTPS public origin and merchant credentials; local runs do not accept payment or unlock Plus from the browser alone.
 - Added product and market research, setup notes, architecture/security notes and an environment template. This alpha still needs production identity features such as email verification, password recovery and account deletion before a public paid launch.
 - Validation: Node syntax checks passed for the changed server, account, UI, desktop and CLI code; `git diff --check` passed; local dashboard returned HTTP 200. No automated suite run in this pass.
+
+## 2026-10-01 — Security cases workspace
+
+- Added an account-scoped Cases workspace for tracking suspicious agent activity and other security work, using familiar issue-tracker patterns: status, priority, labels, search, and list/board layouts.
+- Cases can be created directly or from an activity entry. Each linked case keeps a source-event reference while leaving the integrity-protected activity history untouched.
+- Stored cases in a separate local SQLite database with account-filtered reads and updates, strict field validation, and bounded titles, descriptions, and labels.
+- Added tests for case data validation, state transitions, account separation, authenticated API access, and cross-account update rejection.
+- Checked Linear’s official docs for filters, priority, and status boards; adapted only patterns that suit an individual, local-first security workflow.
+- Validation: full `npm.cmd test` suite passed (52 tests); changed JavaScript files passed syntax checks; `git diff --check` passed. The plain `npm` PowerShell launcher is broken on this host, so the `.cmd` shim was used.

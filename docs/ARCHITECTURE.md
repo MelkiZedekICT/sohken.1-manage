@@ -10,6 +10,10 @@ The local install keeps each account in a separate SQLite profile, and the first
 
 Account sign-in uses salted scrypt password hashes and server-side, revocable sessions in HttpOnly cookies. Razorpay keys stay on the server. Plus access comes only from signed subscription webhooks; the browser cannot set its own plan.
 
+## Security cases
+
+Cases use a separate local SQLite store, keyed by account ID. The API only reads or changes cases through an authenticated browser session and includes the account ID in every database query. Cases can reference an event but do not alter the append-only security history. The first version supports open, in-progress and resolved states, five simple priorities, labels, search, and list or board presentation. Sharing, team roles, notifications, and server sync are outside this local-first slice.
+
 ## Fixed policy before programmable policies
 
 Only known typed adapters exist. An unknown tool fails rather than falling through to a shell. ticket.create requires exact owner approval; diagnostics.read uses clearly labeled fixtures. network.send and file.delete never touch their destinations. This gives a small enforceable boundary before adding OPA and actual integrations.

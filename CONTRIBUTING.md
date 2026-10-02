@@ -13,7 +13,7 @@ Sohken is a security tool. Every contribution must preserve the security invaria
 ```sh
 node --version   # >= 24.0.0
 npm ci
-npm test         # 49 tests across core, HTTP, CLI/MCP, extension
+npm test         # Core, HTTP, CLI/MCP, extension and website checks
 ```
 
 Desktop development additionally requires `node node_modules/electron/install.js` for the Electron runtime.
@@ -54,7 +54,7 @@ Security-relevant changes must use the `security` type and explain the threat mo
 
 ## Pull request checklist
 
-- [ ] `npm test` passes (49+ tests, zero failures)
+- [ ] `npm test` passes with zero failures
 - [ ] No new dependencies added without justification
 - [ ] No credentials, tokens, or secrets in committed code
 - [ ] Security invariants preserved (fail-closed, credential separation, audit chain)

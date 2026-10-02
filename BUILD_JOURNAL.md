@@ -9,7 +9,7 @@ User priorities: solo builder, low cost, downloadable interfaces, and a technica
 ## 2026-09-16 — Research and initial implementation
 
 - Completed research package: 32 problems, build/deployment plan and primary-source register in research/.
-- Changed prototype stack from proposed Python/PostgreSQL to Node 24 + SQLite to support a lightweight shared desktop/terminal core. Decision recorded in sohken-build.md.
+- Changed prototype stack from proposed Python/PostgreSQL to Node 24 + SQLite to support a lightweight shared desktop/terminal core. Decision recorded in docs/BUILD_PLAN.md.
 - Added core scanner, fixed-tool policy, SQLite action ledger, exact approval digest, local ticket execution, audit verification and authenticated loopback HTTP API.
 - Added dashboard, Manifest V3 extension, CLI and stdio MCP source files through specialist work.
 - Extension agent reported five scanner tests passing. Desktop packaging and integrated security tests were not completed before interruption.
@@ -113,3 +113,11 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Added an npm vulnerability check to CI and documented the difference between a downloadable local alpha, a static public page, and a future hosted service.
 - Validation so far: 60 tests pass; SDK build and changed JavaScript syntax checks pass. Self-audit is being rerun after false-positive fixes. Remote GitHub CI and public release publishing remain outstanding.
 - Final follow-up: 62/62 tests pass after adding the static-site privacy/asset checks; SDK build and JavaScript syntax checks pass. The self-audit now scans 75 files / 3.2 MB without reaching limits and reports zero configured patterns after test-fixture false positives were removed. Local dashboard auth/setup responds HTTP 200; the existing workspace has an account now, so it correctly asks for sign-in instead of first-account registration. `npm audit` cannot reach the public npm endpoint from this restricted host; the same check is enforced in both GitHub CI and tagged-release workflows.
+
+## 2026-10-02 - Repository cleanup and full source bundle
+
+- Moved project imagery under `assets/images/`, the supplied product brief under `research/source-material/`, and the implementation plan to `docs/BUILD_PLAN.md`; updated links and left generated showcase output under `miscellaneous/`.
+- Rewrote the project README around the alpha's actual boundaries, updated contribution and deployment notes, and added `HOW_TO_RUN.md` for local, terminal, extension, MCP and Windows desktop use.
+- Consolidated the former test, release and website workflows into `.github/workflows/sohken.yml`; manual runs choose verification or static-site publishing, while version tags publish download files after checks pass.
+- Added a full source ZIP to the release packaging step. It includes the developer run guide, filters ignored local files, and records SHA-256 checksums with the other downloads.
+- Verification: `npm test` passed 62/62 on this Windows workspace. Remote Actions logs are not accessible from the supplied screenshot, which only shows the Ubuntu job exiting with code 1; this cleanup does not claim to identify that historical failing step. The restricted local host cannot complete `npm audit` because it cannot reach the npm advisory endpoint.

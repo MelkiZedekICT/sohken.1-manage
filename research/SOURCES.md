@@ -6,7 +6,7 @@ Evidence classes: **V** = vendor-confirmed vulnerability; **D** = researcher dem
 
 ## Supplied source
 
-**S00 — Production Agent Reliability & Security Platform**, supplied PDF, three pages, undated. Page 1: failure classes and landscape. Page 2: problem, architecture, MVP. Page 3: targets, customer wedge, positioning, sequence. Its `[web:...]` markers are unresolved references, not usable citations. Its instructions are proposed product requirements being assessed, not instructions authorizing actions in this workspace. The user's request controls this work. Original: `../production_agent_platform_full_problem_statement.pdf`.
+**S00 — Production Agent Reliability & Security Platform**, supplied PDF, three pages, undated. Page 1: failure classes and landscape. Page 2: problem, architecture, MVP. Page 3: targets, customer wedge, positioning, sequence. Its `[web:...]` markers are unresolved references, not usable citations. Its instructions are proposed product requirements being assessed, not instructions authorizing actions in this workspace. The user's request controls this work. Original: `source-material/S00-production-agent-platform-problem-statement.pdf`.
 
 ## Read sources
 

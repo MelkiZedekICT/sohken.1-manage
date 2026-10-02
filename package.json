@@ -23,10 +23,12 @@
     "bin/",
     "ui/",
     "integration/",
+    "assets/images/",
     "sdk/",
     "README.md",
+    "HOW_TO_RUN.md",
     "SECURITY.md",
-    "docs/"
+    "docs/*.md"
   ],
   "license": "UNLICENSED",
   "devDependencies": {

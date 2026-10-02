@@ -17,7 +17,7 @@ The authenticated application API is not a public multi-customer service. Email 
 
 ## Safe release order
 
-1. Run tests and the npm advisory check in CI; review any finding before release.
+1. Run tests and the npm advisory check in the combined GitHub workflow; review any finding before release.
 2. Keep workflow actions pinned to reviewed commit SHAs and update them deliberately.
 3. Run `sohken audit project --path .` locally and triage the result. The pattern scanner can report test examples and harmless uses; explain accepted findings in the release review.
 4. Build the alpha downloads and publish them as a prerelease only. Keep signing status and limitations visible.

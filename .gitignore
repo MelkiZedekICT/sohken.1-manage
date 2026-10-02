@@ -15,3 +15,4 @@ config.json
 # Dashboard screenshots — not ready yet
 docs/screenshots/
 research/*.png
+miscellaneous/brag-output-*/

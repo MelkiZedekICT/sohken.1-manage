@@ -1,7 +1,7 @@
 # Sohken public page
 
-This is a plain static website in `web/`. It has no server API, sign-up form, database, analytics, or payment code. The text check runs in the visitor's browser. Download buttons link to GitHub Releases.
+The `web/` folder is a static website. It has no sign-up form, database, analytics or payment code. Its text check runs in the browser, and download buttons open GitHub Releases.
 
-To publish with GitHub Pages, enable **Settings → Pages → Build and deployment → GitHub Actions** in the repository. Then run **Actions → Publish Sohken website → Run workflow**. This workflow is manual so a routine code push does not publish the site. The page is public once the workflow completes. The release buttons point to the repository's Releases page; publish the alpha download release before directing users there.
+To publish with GitHub Pages, first enable **Settings → Pages → Build and deployment → GitHub Actions** in the repository. Then run **Actions → Sohken checks, downloads and website → Run workflow** and choose `publish-site`. A routine code push does not publish the page. Publish the alpha release before directing users to the download links.
 
-The desktop alpha currently runs locally. It is not a shared hosted account service; its local project checks must never be enabled on a public app server. The optional npm advisory lookup discloses package names and exact versions to Google's OSV service only after the user opts in inside the local app.
+The desktop app runs on the user's computer. It is not a shared hosted service. The optional npm advisory lookup sends package names and versions to Google's OSV service only after a user opts in; it does not send source files.

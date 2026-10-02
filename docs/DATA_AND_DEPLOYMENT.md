@@ -25,17 +25,17 @@ For the downloadable terminal bundle, install its `.tgz` file with `npm install 
 
 The reset asks for the new password twice without displaying it and signs out existing sessions for that account. For this workspace's development server, add `--data-dir C:\DeveloperFiles\Sohken\.sohken` to both commands. The reset works only for someone who can access the machine and its local data directory; it is not a hosted customer password-recovery flow.
 
-The public page in `web/` is now static. It has no sign-up form, account database, analytics or payment backend. It does not collect user emails. Its text check stays in the browser, and its download buttons open GitHub Releases. To publish it, configure GitHub Pages to use GitHub Actions, then manually run the **Publish Sohken website** workflow. Full steps are in [web/README.md](../web/README.md).
+The public page in `web/` is now static. It has no sign-up form, account database, analytics or payment backend. It does not collect user emails. Its text check stays in the browser, and its download buttons open GitHub Releases. To publish it, configure GitHub Pages to use GitHub Actions, then run **Sohken checks, downloads and website** and choose `publish-site`. Full steps are in [web/README.md](../web/README.md).
 
 There is no encryption-at-rest layer. On a personal computer, protect the operating-system login and disk; make backups of the complete data directory and keep them private. Never publish `config.json`, any SQLite file, a data-directory backup, or payment secrets.
 
 ## Recommended first release: downloadable local beta
 
-The lowest-cost path is to publish app downloads as assets on the GitHub repository's Releases page. GitHub Releases are designed to package notes and binary files for people to download ([GitHub release guide](https://docs.github.com/en/repositories/releasing-projects-on-github)). A tag-triggered workflow has now been added at `.github/workflows/release.yml`: it runs the tests, builds the SDK, packages the Windows desktop app, terminal bundle, browser extension and checksums, then publishes them as a prerelease for alpha tags.
+The lowest-cost path is to publish app downloads as assets on the GitHub repository's Releases page. GitHub Releases are designed to package notes and binary files for people to download ([GitHub release guide](https://docs.github.com/en/repositories/releasing-projects-on-github)). The combined workflow at `.github/workflows/sohken.yml` runs checks, publishes Windows downloads for version tags, and can manually publish the static page.
 
 After this change is pushed and the workflow appears on GitHub:
 
-1. Confirm the `Security boundary tests` workflow passes on `main`.
+1. Confirm the `Sohken checks, downloads and website` workflow passes on `main`.
 2. From the reviewed commit, create and push the matching package tag:
 
    ```powershell
@@ -43,7 +43,7 @@ After this change is pushed and the workflow appears on GitHub:
    git push origin v0.1.0-alpha.3
    ```
 
-3. Watch **Actions → Build and publish Sohken downloads**. When it passes, people can get the desktop ZIP, terminal package, extension ZIP, and checksums from `https://github.com/MelkiZedekICT/sohken.1-manage/releases`.
+3. Watch **Actions → Sohken checks, downloads and website**. When it passes, people can get the full source ZIP, desktop ZIP, terminal package, extension ZIP, and checksums from `https://github.com/MelkiZedekICT/sohken.1-manage/releases`.
 4. Mark the GitHub release as a pre-release and say plainly that this is an unsigned alpha. The current desktop ZIP is not code-signed, so Windows may warn before opening it. Do not call this a security-certified product.
 
 Do not create the tag until this commit is on `main` and CI is green. A GitHub tag starts the public build and release job.

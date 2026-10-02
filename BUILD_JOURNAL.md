@@ -130,3 +130,8 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - The `v0.1.0-alpha.3` tag passed Ubuntu and Windows verification but its release job failed at `npm run package:desktop`. Inspection found that the builder forced Electron Packager to use `.cache/electron-distribution`; a clean GitHub runner has no ZIP there even after `npm ci`.
 - Removed that override so Electron Packager uses Electron's standard artifact cache and checksum validation. The local clean-cache retry reached the expected network download, which this sandbox blocks; the successful GitHub build for alpha.4 is the remaining end-to-end check.
 - Bumped the app and package to `0.1.0-alpha.4` so the failed public tag remains unchanged and the repaired package can be released under a new version.
+## 2026-10-02 - Alpha 4 downloads published
+
+- GitHub Actions run `37043089799` completed successfully on the alpha.4 tag. Ubuntu and Windows verification passed, and the clean-runner Windows desktop package built and published.
+- Published prerelease: `https://github.com/MelkiZedekICT/sohken.1-manage/releases/tag/v0.1.0-alpha.4`. Assets include the full source ZIP, Windows desktop ZIP, browser extension ZIP, CLI package, and checksums.
+- The release is a free local alpha. Hosted accounts and paid Plus billing remain unavailable; no customer charges can be taken by this release.

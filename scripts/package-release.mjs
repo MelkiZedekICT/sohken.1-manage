@@ -1,10 +1,11 @@
-import {mkdir,readFile,writeFile,readdir,cp,stat} from 'node:fs/promises';
+import {mkdir,readFile,writeFile,readdir,cp,stat,rm} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import path from 'node:path';
 const root=process.cwd();
 const release=path.join(root,'release');await mkdir(release,{recursive:true});
 const pkg=JSON.parse(await readFile('package.json','utf8'));
+for(const file of await readdir(release))if(/^sohken-(?:desktop|extension|security)-.*\.(?:zip|tgz)$/.test(file)||file==='sohken-checksums.json')await rm(path.join(release,file),{force:true});
 const npmCli=process.env.NPM_CLI||path.join(path.dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');
 execFileSync(process.execPath,['node_modules/typescript/bin/tsc','-p','tsconfig.json'],{stdio:'inherit'});
 execFileSync(process.execPath,[npmCli,'pack','--ignore-scripts','--cache',path.join(root,'.cache','npm'),'--pack-destination',release],{stdio:'inherit'});
@@ -18,6 +19,7 @@ zip(path.join(root,'extension','*'),path.join(release,`sohken-extension-${pkg.ve
 const desktop=path.join(root,'dist','Sohken-win32-x64');
 try{await stat(path.join(desktop,'Sohken.exe'));
  const included=path.join(desktop,'resources','release');await mkdir(included,{recursive:true});
+ for(const file of await readdir(included))if(/^sohken-(?:extension|security)-.*\.(?:zip|tgz)$/.test(file))await rm(path.join(included,file),{force:true});
  for(const f of await readdir(release))if(f.endsWith('.tgz')||f.startsWith('sohken-extension-'))await cp(path.join(release,f),path.join(included,f));
  await cp('README.md',path.join(desktop,'README.md'));await cp('SECURITY.md',path.join(desktop,'SECURITY.md'));
  zip(desktop,path.join(release,`sohken-desktop-win32-x64-${pkg.version}.zip`));

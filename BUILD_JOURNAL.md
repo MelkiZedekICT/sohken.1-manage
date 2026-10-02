@@ -90,3 +90,14 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Added tests for case data validation, state transitions, account separation, authenticated API access, and cross-account update rejection.
 - Checked Linear’s official docs for filters, priority, and status boards; adapted only patterns that suit an individual, local-first security workflow.
 - Validation: full `npm.cmd test` suite passed (52 tests); changed JavaScript files passed syntax checks; `git diff --check` passed. The plain `npm` PowerShell launcher is broken on this host, so the `.cmd` shim was used.
+
+## 2026-10-02 — First-run accounts and download release path
+
+- Checked the workspace data folder: it contains zero accounts and zero active sessions. Updated the dashboard to open first-account creation automatically and explain that the user makes the email/password; there is no shared starter password.
+- Added a local `account list` command and an interactive, masked `account reset-password --email ...` command. Password changes revoke old sessions. Documented that this does not provide hosted customer recovery.
+- Wrote a data-location and deployment guide covering each SQLite/config file, local Windows/macOS/Linux defaults, the separate early-access email store, backups, and what remains before paid public hosting.
+- Added tag-triggered GitHub Releases automation to run tests, build the Windows desktop, terminal archive, browser add-on and checksums. Bumped the package to 0.1.0-alpha.3.
+- Made container data use `/data`, a persistent-volume mount, and a non-root runtime. Added Docker build-context exclusions for secrets, databases and local agent configuration.
+- Found and fixed stale archives leaking into newly built releases. The current local build now contains one desktop ZIP, one extension ZIP, one terminal package and a checksum manifest for 0.1.0-alpha.3 only.
+- Validation: 54 tests pass; SDK build succeeds; CLI and changed JavaScript syntax checks pass; release desktop/terminal/extension packages built successfully. Docker image build could not run because the Docker Desktop daemon is not running in this environment.
+- Launch decision: downloadable local alpha can be shared after remote CI passes and the release is tagged. A public multi-user paid server is not ready until hosted account recovery/deletion, verification, legal terms, backups and independent security review are in place.

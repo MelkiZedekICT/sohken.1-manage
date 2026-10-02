@@ -163,7 +163,7 @@ for (const [id, layout] of [['case-list-mode','list'],['case-board-mode','board'
 async function refresh() {
   if (!token) {
     try { const result = await api('/api/auth/me'); account = result.account; renderAccount(); }
-    catch { account = null; renderAccount(); $('auth-screen').hidden = false; $('pairing').hidden = true; setControls(); return; }
+    catch { account = null; renderAccount(); try { const setup = await api('/api/auth/setup'); setAuthMode(setup.needsAccount ? 'register' : 'login'); $('auth-note').textContent = setup.needsAccount ? 'First time here? Create a Free account for this device. No invitation or payment is needed.' : setup.local ? 'Forgot the password on this device? Use the Sohken terminal tool with this same data folder to reset it.' : 'Password recovery is not configured for this hosted service yet.'; } catch { setAuthMode('login'); } $('auth-screen').hidden = false; $('pairing').hidden = true; setControls(); return; }
   }
   try { state = await api('/api/state'); $('pairing').hidden = true; render(); if (account) await loadCases(); }
   catch (error) { if (error.status === 401 && !token) { account = null; renderAccount(); showAuth('Your session ended. Sign in again.'); return; } state = null; $('connection').textContent = 'Disconnected'; $('connection').className = 'status neutral'; $('guard-label').textContent = 'ENGINE NOT CONNECTED'; $('guard-title').textContent = 'Connection needs attention.'; $('guard-description').textContent = 'Previously displayed history may be stale. Reconnect to review the current state.'; setControls(); throw error; }

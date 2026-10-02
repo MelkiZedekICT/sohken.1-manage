@@ -140,6 +140,22 @@ export class AccountStore {
   }
 
   accountById(id) { return this.safeAccount(this.db.prepare('SELECT * FROM accounts WHERE id=?').get(id)); }
+  hasAccounts() { return Boolean(this.db.prepare('SELECT 1 FROM accounts LIMIT 1').get()); }
+  listAccounts() { return this.db.prepare('SELECT * FROM accounts ORDER BY created_at').all().map(row => this.safeAccount(row)); }
+
+  async resetPassword(emailValue, password) {
+    const email = this.validate(emailValue, password);
+    const row = this.db.prepare('SELECT id FROM accounts WHERE email=?').get(email);
+    if (!row) throw new Error('No local account uses that email address.');
+    const passwordHash = await this.passwordHash(password);
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      this.db.prepare('UPDATE accounts SET password_hash=? WHERE id=?').run(passwordHash, row.id);
+      this.db.prepare('DELETE FROM sessions WHERE account_id=?').run(row.id);
+      this.db.exec('COMMIT');
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+    return this.accountById(row.id);
+  }
 
   engineFor(id) {
     if (!PROFILE_ID.test(id)) throw new Error('Invalid account profile.');

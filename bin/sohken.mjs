@@ -20,6 +20,9 @@ Usage: sohken <command> [options]
   audit verify             Verify the local audit chain
   export                   Print a sanitized JSON export
   demo                     Run safe local demonstration fixtures
+  account list             Show accounts in this local data folder
+  account reset-password --email EMAIL
+                           Reset a local password and sign out its sessions
   mcp                      Serve the agent-only MCP interface over stdio
   help                     Show this help
 
@@ -36,7 +39,7 @@ MCP auth: SOHKEN_AGENT_TOKEN, otherwise local agentToken in config.json.
 MCP never offers approve, reject, pause, export, or owner credentials.
 `;
 
-const VALUE_OPTIONS = new Set(['data-dir', 'port', 'host', 'text', 'file', 'tool', 'args', 'key', 'digest']);
+const VALUE_OPTIONS = new Set(['data-dir', 'port', 'host', 'text', 'file', 'tool', 'args', 'key', 'digest', 'email']);
 export function parseArgs(argv) {
   const positional = [];
   const options = Object.create(null);
@@ -110,6 +113,33 @@ function required(options, name) {
   return options[name];
 }
 
+function hiddenInput(prompt) {
+  if (!process.stdin.isTTY || typeof process.stdin.setRawMode !== 'function') throw new Error('Password reset needs an interactive terminal.');
+  return new Promise((resolve, reject) => {
+    const stdin = process.stdin;
+    let value = '';
+    process.stdout.write(prompt);
+    const finish = (error, result) => {
+      stdin.removeListener('data', onData);
+      stdin.setRawMode(false);
+      stdin.pause();
+      process.stdout.write('\n');
+      if (error) reject(error); else resolve(result);
+    };
+    const onData = chunk => {
+      for (const char of chunk.toString('utf8')) {
+        if (char === '\u0003') return finish(new Error('Password reset cancelled.'));
+        if (char === '\r' || char === '\n') return finish(null, value);
+        if (char === '\u007f' || char === '\b') { if (value.length) { value = value.slice(0, -1); process.stdout.write('\b \b'); } continue; }
+        if (char >= ' ') { value += char; process.stdout.write('*'); }
+      }
+    };
+    stdin.setRawMode(true);
+    stdin.resume();
+    stdin.on('data', onData);
+  });
+}
+
 async function readScanText(options) {
   if (Object.hasOwn(options, 'text') && Object.hasOwn(options, 'file')) throw new Error('Use either --text or --file, not both.');
   if (Object.hasOwn(options, 'text')) return options.text;
@@ -147,6 +177,28 @@ export async function main(argv = process.argv.slice(2)) {
     process.once('SIGINT', stop);
     process.once('SIGTERM', stop);
     return;
+  }
+  if (command === 'account') {
+    const { AccountStore } = await import('../src/accounts.mjs');
+    const store = new AccountStore(settings.dataDir, null);
+    try {
+      if (subcommand === 'list' && !extra.length && !options.email) {
+        const accounts = store.listAccounts();
+        if (!accounts.length) { process.stdout.write('No accounts exist in this local data folder. Open the dashboard and create a Free account.\n'); return; }
+        process.stdout.write(accounts.map(item => `${item.email} · ${item.planName} · created ${item.createdAt}`).join('\n') + '\n');
+        return;
+      }
+      if (subcommand === 'reset-password' && !extra.length) {
+        const email = required(options, 'email');
+        const password = await hiddenInput('New password (12–128 characters): ');
+        const confirmation = await hiddenInput('Repeat new password: ');
+        if (password !== confirmation) throw new Error('Passwords do not match. Nothing was changed.');
+        const account = await store.resetPassword(email, password);
+        process.stdout.write(`Password updated for ${account.email}. Existing sign-ins were cleared.\n`);
+        return;
+      }
+      throw new Error('Usage: sohken account list | sohken account reset-password --email EMAIL');
+    } finally { store.close(); }
   }
   if (command === 'mcp') {
     if (subcommand) throw new Error('Usage: sohken mcp [--data-dir PATH] [--port PORT]');

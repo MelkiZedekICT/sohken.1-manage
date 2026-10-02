@@ -14,6 +14,7 @@ async function fixture(t) {
 
 test('case API requires a signed-in account session', async t => {
   const server = await fixture(t);
+  assert.deepEqual(await (await fetch(`${server.url}/api/auth/setup`)).json(), { needsAccount: true, local: true });
   const headers = { Authorization: `Bearer ${server.ownerToken}`, 'Content-Type': 'application/json' };
   assert.equal((await fetch(`${server.url}/api/cases`, { headers })).status, 401);
   assert.equal((await fetch(`${server.url}/api/cases`, { method: 'POST', headers, body: JSON.stringify({ title: 'No session' }) })).status, 401);
@@ -27,6 +28,7 @@ test('case API keeps data and updates private to each signed-in account', async 
     return response.headers.get('set-cookie').split(';', 1)[0];
   };
   const first = await signup('first@example.test');
+  assert.deepEqual(await (await fetch(`${server.url}/api/auth/setup`)).json(), { needsAccount: false, local: true });
   const second = await signup('second@example.test');
   const send = (cookie, route, body, method = 'GET') => fetch(`${server.url}${route}`, { method, headers: { Cookie: cookie, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
   const created = await send(first, '/api/cases', { title: 'Agent tried to open a private file', priority: 'high', labels: ['access-review'] }, 'POST');

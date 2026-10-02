@@ -66,6 +66,7 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
             const cookies = parseCookies(req.headers.cookie || '');
             const userSession = accounts.session(cookies.sohken_session);
             if (req.method === 'GET' && p === '/api/health') return json(res, 200, { status: 'ok', version: engine.state().version });
+            if (req.method === 'GET' && p === '/api/auth/setup') return json(res, 200, { needsAccount: !accounts.hasAccounts(), local: !remoteMode });
             if (req.method === 'GET' && p === '/api/auth/me') {
                 if (!userSession) throw new EngineError('Sign in to open your workspace.', 401);
                 return json(res, 200, { account: userSession.account });

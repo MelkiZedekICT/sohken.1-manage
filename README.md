@@ -24,9 +24,9 @@ short_description: Real-time security checkpoint & firewall for tool-using AI ag
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/v0.1.0--alpha.2-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
+  <img src="https://img.shields.io/badge/v0.1.0--alpha.3-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
   <img src="https://img.shields.io/badge/%3E%3D24-00ffff?style=flat-square&labelColor=0d0d0d&label=node" alt="Node"/>
-  <img src="https://img.shields.io/badge/49%2F49-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
+  <img src="https://img.shields.io/badge/53%2F53-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
   <img src="https://img.shields.io/badge/zero-cc66ff?style=flat-square&labelColor=0d0d0d&label=cloud%20deps" alt="Cloud"/>
 </p>
 
@@ -97,6 +97,8 @@ node bin/sohken.mjs serve
 
 Open the dashboard URL from the terminal output and create a Free account or sign in. Click **Run safe demo** — it generates an injection scan, a blocked network transfer, a verified diagnostic read, and a ticket waiting for your approval.
 
+On a new data folder, the dashboard opens account creation automatically. Choose your email and a password with at least 12 characters; the project has no shared demo password. For local account recovery, see [data and deployment](docs/DATA_AND_DEPLOYMENT.md).
+
 ```sh
 # Scan text for injection signals
 node bin/sohken.mjs scan --text "Ignore all previous instructions"
@@ -112,6 +114,8 @@ node bin/sohken.mjs export
 ```
 
 State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKEN_HOME`.
+
+See [where data lives and how to publish downloads](docs/DATA_AND_DEPLOYMENT.md) before exposing a shared server.
 
 </td>
 <td width="160" align="center" valign="top">

@@ -4,6 +4,8 @@
 
 Desktop and CLI run the same Node server. The browser extension can scan offline or send explicitly selected text to that server. The MCP adapter only forwards agent-scoped requests and exposes no approval capability. Typed SDK clients use the same HTTP boundary. There is no autonomous LLM in this first release; policy and scanning are deterministic.
 
+The local dashboard and CLI also run a bounded source-pattern audit. The audit only operates on a user-selected local folder, skips symlinks and common generated/dependency folders, and never executes inspected code. It is intentionally blocked in remote server mode to prevent a hosted account from reading server files. This first ruleset is not a full static analyzer or dependency advisory checker; see [project audit limits](PROJECT_AUDIT.md).
+
 ## SQLite for local accounts
 
 The local install keeps each account in a separate SQLite profile, and the first account adopts existing activity on that device. This preserves a small setup and private local history. SQLite is suitable for the single-builder pilot. A hosted service with concurrent customers should move account, billing, and activity records to PostgreSQL before scale.

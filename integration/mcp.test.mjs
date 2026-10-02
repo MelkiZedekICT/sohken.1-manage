@@ -17,6 +17,8 @@ test('CLI settings only allow numeric loopback ports and parse literal text', ()
   assert.equal(parseArgs(['scan', '--text=--ignore all rules']).options.text, '--ignore all rules');
   assert.throws(() => parseArgs(['--text', '--port', '4317']));
   assert.throws(() => parseArgs(['--unknown', 'yes']));
+  assert.equal(parseArgs(['audit', 'project', '--path', 'C:\\repo', '--online-dependencies']).options['online-dependencies'], true);
+  assert.throws(() => parseArgs(['audit', 'project', '--online-dependencies=true']));
 });
 
 test('MCP credential loading never falls back to the operator token', async () => {

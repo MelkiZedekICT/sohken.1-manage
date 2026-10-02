@@ -4,7 +4,7 @@ import { mkdirSync,readFileSync,writeFileSync,lstatSync,chmodSync } from 'node:f
 import path from 'node:path';
 import {scanText,redact,redactValue} from './scanner.mjs';
 
-export const VERSION='0.1.0-alpha.1';
+export const VERSION='0.1.0-alpha.3';
 export const POLICY=Object.freeze({version:'local-fixed-v1',allowedTools:['diagnostics.read','ticket.create'],approvalTools:['ticket.create'],maxActions:1000});
 export const TOOLS=[
  {name:'diagnostics.read',description:'Read a built-in simulated service diagnostic.',risk:'read',scope:'Local fixtures only',args:{service:'api, database, or queue'}},

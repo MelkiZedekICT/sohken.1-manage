@@ -18,6 +18,10 @@ Usage: sohken <command> [options]
   execute ID               Execute an allowed or operator-approved action
   pause | resume           Pause or resume action execution
   audit verify             Verify the local audit chain
+  audit project --path PATH
+                           Check a local code folder for common risky patterns
+                           Add --online-dependencies to query public OSV advisories
+                           (sends npm names and versions, never source files)
   export                   Print a sanitized JSON export
   demo                     Run safe local demonstration fixtures
   account list             Show accounts in this local data folder
@@ -39,7 +43,8 @@ MCP auth: SOHKEN_AGENT_TOKEN, otherwise local agentToken in config.json.
 MCP never offers approve, reject, pause, export, or owner credentials.
 `;
 
-const VALUE_OPTIONS = new Set(['data-dir', 'port', 'host', 'text', 'file', 'tool', 'args', 'key', 'digest', 'email']);
+const VALUE_OPTIONS = new Set(['data-dir', 'port', 'host', 'text', 'file', 'path', 'tool', 'args', 'key', 'digest', 'email']);
+const BOOLEAN_OPTIONS = new Set(['online-dependencies']);
 export function parseArgs(argv) {
   const positional = [];
   const options = Object.create(null);
@@ -49,6 +54,11 @@ export function parseArgs(argv) {
     if (!arg.startsWith('--')) { positional.push(arg); continue; }
     const equal = arg.indexOf('=');
     const key = arg.slice(2, equal < 0 ? undefined : equal);
+    if (BOOLEAN_OPTIONS.has(key)) {
+      if (equal >= 0 || Object.hasOwn(options, key)) throw new Error(`Invalid or duplicate option: --${key}`);
+      options[key] = true;
+      continue;
+    }
     if (!VALUE_OPTIONS.has(key)) throw new Error(`Unknown option: --${key}`);
     if (Object.hasOwn(options, key)) throw new Error(`Duplicate option: --${key}`);
     const value = equal < 0 ? argv[++i] : arg.slice(equal + 1);
@@ -226,6 +236,8 @@ export async function main(argv = process.argv.slice(2)) {
     result = await request(`/api/actions/${encodeURIComponent(subcommand)}/${command}`, command === 'execute' ? {} : { digest: required(options, 'digest') });
   } else if (command === 'audit' && subcommand === 'verify' && !extra.length) {
     result = await request('/api/audit/verify');
+  } else if (command === 'audit' && subcommand === 'project' && !extra.length) {
+    result = await request('/api/project-audit', { path: required(options, 'path'), ...(options['online-dependencies'] ? { onlineDependencies: true } : {}) });
   } else if (!subcommand && command === 'status') {
     result = await request('/api/state');
   } else if (!subcommand && ['pause', 'resume'].includes(command)) {

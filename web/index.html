@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sohken lets you check what an AI agent wants to do before it happens.">
+    <meta name="description" content="Sohken checks local project code and reviews a limited set of AI agent actions routed through it.">
   <meta name="theme-color" content="#171918">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
   <title>Sohken — Check before your agent acts</title>
   <link rel="stylesheet" href="./src/styles.css">
 </head>
@@ -13,34 +15,34 @@
   <header class="site-header">
     <a class="logo" href="#top" aria-label="Sohken home"><span>Sn</span>sohken</a>
     <nav aria-label="Main navigation"><a href="#how">How it works</a><a href="#plans">Plans</a><a href="#questions">Questions</a></nav>
-    <a class="small-button" href="#join">Get early access</a>
+    <a class="small-button" href="#download">Get the app</a>
   </header>
 
   <main id="main">
     <section class="hero" id="top">
       <div class="hero-copy reveal">
         <p class="overline">SECURITY FOR AI AGENTS</p>
-        <h1>Let your agent work.<br><em>Stop risky actions.</em></h1>
-        <p class="lead">Sohken checks what an agent wants to do, blocks unsafe requests, and asks you before important actions.</p>
-        <div class="hero-actions"><a class="button light" href="#join">Join early access</a><a class="button quiet" href="#demo">Try the check</a></div>
-        <p class="trust-line"><span></span>Runs on your computer · Your work stays with you</p>
+        <h1>Check the code.<br><em>Review agent actions.</em></h1>
+        <p class="lead">Sohken checks local project files for common risks and reviews a small set of agent actions sent through Sohken.</p>
+        <div class="hero-actions"><a class="button light" href="#download">Get Sohken alpha</a><a class="button quiet" href="#demo">Try the text check</a></div>
+        <p class="trust-line"><span></span>Local app · Source files stay on your computer</p>
       </div>
       <div class="guard-card reveal" aria-label="Example action review">
-        <div class="guard-top"><span class="seal">S</span><span>Action review</span><span class="safe-dot">Ready</span></div>
+        <div class="guard-top"><span class="seal">S</span><span>Example review</span><span class="safe-dot">Local demo</span></div>
         <div class="request"><p>YOUR AGENT WANTS TO</p><h2>Send a file to an outside service</h2><div class="risk"><span>!</span><div><strong>Blocked</strong><small>This action could share private work.</small></div></div></div>
         <div class="guard-actions"><button type="button" disabled>Keep blocked</button><button type="button" disabled class="outline">Review details</button></div>
-        <p class="card-note">Nothing happens until you allow it.</p>
+        <p class="card-note">Example only. External actions are not connected yet.</p>
       </div>
     </section>
 
     <section class="proof strip" aria-label="Product qualities"><span>Local first</span><span>Clear reasons</span><span>You stay in control</span><span>Works without model fees</span></section>
 
     <section class="section" id="how">
-      <div class="section-head"><p class="overline">HOW IT WORKS</p><h2>A quiet guard between<br>thought and action.</h2></div>
+      <div class="section-head"><p class="overline">WHAT WORKS TODAY</p><h2>Useful checks on<br>your own computer.</h2></div>
       <div class="steps">
-        <article><b>01</b><div class="step-mark">○</div><h3>Your agent asks</h3><p>Sohken receives the action before it runs.</p></article>
-        <article><b>02</b><div class="step-mark indigo">◇</div><h3>Sohken checks</h3><p>Simple rules flag risky text and unsafe tools.</p></article>
-        <article><b>03</b><div class="step-mark red">止</div><h3>You decide</h3><p>Allow the exact action, or keep it blocked.</p></article>
+        <article><b>01</b><div class="step-mark">○</div><h3>Choose a project</h3><p>Run a read-only check on supported source and settings files.</p></article>
+        <article><b>02</b><div class="step-mark indigo">◇</div><h3>Review evidence</h3><p>See a file, line, warning and a suggested next step.</p></article>
+        <article><b>03</b><div class="step-mark red">止</div><h3>Route supported actions</h3><p>Review a narrow set of local demo actions. Other agent tools are outside Sohken.</p></article>
       </div>
     </section>
 
@@ -55,44 +57,41 @@
     </section>
 
     <section class="section plans" id="plans">
-      <div class="section-head"><p class="overline">SIMPLE PLANS</p><h2>Start free.<br>Support the build when ready.</h2><p>Plus costs ₹199 a month. Checkout opens inside your Sohken workspace after payment is configured.</p></div>
+      <div class="section-head"><p class="overline">PLANS</p><h2>Start with the free alpha.</h2><p>Plus is planned at ₹199 per month. Sign-up billing is not available yet.</p></div>
       <div class="plan-grid">
-        <article class="plan"><p class="plan-name">Free</p><h3>₹0</h3><p>For trying Sohken on one computer.</p><ul><li>Text checks</li><li>Protected reviews</li><li>25 recent activity entries</li><li>Browser add-on and terminal tool</li></ul><a class="button quiet full" href="#join">Join free list</a></article>
-        <article class="plan featured"><span class="plan-tag">FOR DEEPER REVIEWS</span><p class="plan-name">Plus</p><h3>₹199 <small>/ month</small></h3><p>More room to review and keep a clear record.</p><ul><li>Everything in Free</li><li>Full activity history</li><li>Downloadable evidence</li><li>History integrity check</li></ul><a class="button light full" href="#join" data-plan="Plus">Join the Plus list</a><p class="plan-note">This page does not charge you. Checkout opens in the app.</p></article>
+        <article class="plan"><p class="plan-name">Free alpha</p><h3>₹0</h3><p>For local testing on one computer.</p><ul><li>Text warning check</li><li>Local project pattern audit</li><li>Optional npm advisory lookup</li><li>Terminal and browser add-on</li></ul><a class="button quiet full" href="#download">View downloads</a></article>
+        <article class="plan featured"><span class="plan-tag">PLANNED</span><p class="plan-name">Plus</p><h3>₹199 <small>/ month</small></h3><p>Paid features are being built. No checkout is available today.</p><ul><li>Longer security history</li><li>Saved reports</li><li>Hosted account recovery</li><li>Subscription and cancellation tools</li></ul><a class="button light full" href="#download">Try the free alpha</a><p class="plan-note">You will not be charged by this page.</p></article>
       </div>
     </section>
 
-    <section class="join" id="join">
-      <div><p class="overline">EARLY ACCESS</p><h2>Get early access to Sohken.</h2><p>Tell us where to send the private build. We only store this email for Sohken updates.</p></div>
-      <form id="join-form">
-        <input id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label for="email">Email address</label>
-        <div class="email-row"><input id="email" name="email" type="email" required maxlength="160" autocomplete="email" placeholder="you@example.com"><button class="button vermilion" type="submit">Join the list</button></div>
-        <label class="choice"><input type="checkbox" id="founder" name="founder"> I’m interested in Plus at ₹199 per month.</label>
-        <p id="form-status" role="status">No payment is taken here. You can leave the list at any time.</p>
-      </form>
+    <section class="section" id="download">
+      <div class="section-head"><p class="overline">DOWNLOAD</p><h2>Use Sohken on your computer.</h2><p>Downloads are published as GitHub prereleases. Check the release notes and file checksums before installing.</p></div>
+      <div class="plan-grid">
+        <article class="plan"><p class="plan-name">Desktop app</p><h3>Windows</h3><p>Install the app, open its local dashboard, and choose a folder to check.</p><a class="button light full" href="https://github.com/MelkiZedekICT/sohken.1-manage/releases">Open downloads ↗</a><p class="plan-note">Unsigned alpha builds may show a Windows warning.</p></article>
+        <article class="plan"><p class="plan-name">Terminal and browser add-on</p><h3>CLI + Extension</h3><p>Run project checks from a terminal or check selected browser text.</p><a class="button quiet full" href="https://github.com/MelkiZedekICT/sohken.1-manage/releases">Open downloads ↗</a><p class="plan-note">Only tools routed through Sohken are checked.</p></article>
+      </div>
     </section>
 
     <section class="section faq" id="questions">
       <div class="section-head"><p class="overline">QUESTIONS</p><h2>Plain answers.</h2></div>
       <details><summary>Is Sohken a full safety guarantee?</summary><p>No. It adds a useful check before supported actions. An agent can still be risky if it uses tools outside Sohken.</p></details>
-      <details><summary>Does my work go to the website?</summary><p>No. The product runs on your computer. The public page stores only the email you choose to submit.</p></details>
-      <details><summary>Will I be charged when I join?</summary><p>No. The page only records interest. Plus members will see the price and terms before checkout.</p></details>
-      <details><summary>What works today?</summary><p>The local app can check text, block fixed unsafe actions, ask for approval, and keep a local history. It is an early build.</p></details>
+      <details><summary>Does my source code go to the website?</summary><p>No. Project checks run in the local app. If you select the optional dependency check, Sohken sends npm package names and versions to Google's public OSV service; it does not send source code.</p></details>
+      <details><summary>Will I be charged?</summary><p>No. Sohken Plus checkout is not available. The ₹199 monthly price is a plan under development.</p></details>
+      <details><summary>What works today?</summary><p>The alpha checks supported local code patterns, can optionally look up npm advisories, checks pasted text, and records a narrow set of simulated local actions. It does not control arbitrary agent tools or provide a full security audit.</p></details>
     </section>
 
     <section class="section legal" id="privacy">
       <div><p class="overline">PRIVACY</p><h2>Your work stays yours.</h2></div>
-      <div><p>The text demo runs in your browser and is not sent to us. If you join early access, we store only your email, chosen plan, join time, and that you joined from this page.</p><p>We use that information only for Sohken access and product updates. We do not sell it. You can remove your email below.</p><form id="leave-form"><label for="leave-email">Remove my email</label><div class="email-row"><input id="leave-email" type="email" required maxlength="160" autocomplete="email" placeholder="you@example.com"><button class="button quiet" type="submit">Leave the list</button></div><p id="leave-status" role="status"></p></form></div>
+      <div><p>This static page does not ask you to create an account or submit an email. Its text demo runs in your browser. Project audits run in the downloadable local app; the optional npm advisory check shares package names and versions with OSV, not source files.</p><p>GitHub hosts the release downloads and may process download requests under its own privacy policy. Sohken does not receive your local scan reports.</p></div>
     </section>
 
     <section class="section legal" id="terms">
-      <div><p class="overline">EARLY ACCESS TERMS</p><h2>Clear limits.</h2></div>
-      <div><p>Sohken is an early test build. It can add useful checks, but it cannot promise that an agent or action is safe. You remain responsible for reviewing important actions.</p><p>This page does not take payment. Plus access is enabled after a verified payment. Clear cancellation and refund terms must be shown before checkout.</p></div>
+      <div><p class="overline">ALPHA TERMS</p><h2>Clear limits.</h2></div>
+      <div><p>Sohken is an early test build. Pattern checks can miss issues and show false alarms. A clean report is not proof that code or an agent is safe. You remain responsible for review and testing.</p><p>This page does not take payment. Paid accounts, shared hosting and customer support are not available yet.</p></div>
     </section>
   </main>
 
   <footer><a class="logo" href="#top"><span>Sn</span>sohken</a><p>Built for deliberate action.</p><div class="footer-links"><a href="#privacy">Privacy</a><a href="#terms">Terms</a></div><p>Independent early build · 2026</p></footer>
-  <script type="module" src="./src/main.ts"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>

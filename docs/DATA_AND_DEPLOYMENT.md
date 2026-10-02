@@ -25,7 +25,7 @@ For the downloadable terminal bundle, install its `.tgz` file with `npm install 
 
 The reset asks for the new password twice without displaying it and signs out existing sessions for that account. For this workspace's development server, add `--data-dir C:\DeveloperFiles\Sohken\.sohken` to both commands. The reset works only for someone who can access the machine and its local data directory; it is not a hosted customer password-recovery flow.
 
-The marketing-page form in `web/` is separate from app accounts. If that page is deployed with the existing AppDeploy backend, `/api/join` saves an email, selected plan, join time, and source to AppDeploy's `early_access` database, and `/api/leave` removes matching addresses. That website has **not** been deployed from this workspace.
+The public page in `web/` is now static. It has no sign-up form, account database, analytics or payment backend. It does not collect user emails. Its text check stays in the browser, and its download buttons open GitHub Releases. To publish it, configure GitHub Pages to use GitHub Actions, then manually run the **Publish Sohken website** workflow. Full steps are in [web/README.md](../web/README.md).
 
 There is no encryption-at-rest layer. On a personal computer, protect the operating-system login and disk; make backups of the complete data directory and keep them private. Never publish `config.json`, any SQLite file, a data-directory backup, or payment secrets.
 
@@ -59,5 +59,5 @@ Hugging Face's own storage documentation says a Space's regular disk is ephemera
 ## Deployment choices
 
 - **Now:** GitHub Releases for downloadable, local-first alpha builds; keep the account and agent data on each user's machine.
-- **Next:** publish a static marketing/download page with a clear privacy notice and links to GitHub Releases. Do not collect email until a verified storage and removal process is configured.
+- **Next:** publish the static marketing/download page with GitHub Pages after publishing the alpha Release assets. The page does not collect email or accept payment.
 - **Later:** deploy the authenticated app server only after the hosted identity, recovery, deletion, privacy, billing, backup, and security-review work above is finished.

@@ -6,8 +6,7 @@ colorTo: purple
 sdk: docker
 app_port: 7860
 pinned: false
-license: mit
-short_description: Real-time security checkpoint & firewall for tool-using AI agents
+short_description: Local project checks and an approval checkpoint for agent actions routed through Sohken
 ---
 
 <p align="center">
@@ -26,7 +25,7 @@ short_description: Real-time security checkpoint & firewall for tool-using AI ag
 <p align="center">
   <img src="https://img.shields.io/badge/v0.1.0--alpha.3-ff00ff?style=flat-square&labelColor=0d0d0d&label=version" alt="Version"/>
   <img src="https://img.shields.io/badge/%3E%3D24-00ffff?style=flat-square&labelColor=0d0d0d&label=node" alt="Node"/>
-  <img src="https://img.shields.io/badge/53%2F53-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
+  <img src="https://img.shields.io/badge/62%2F62-00ff88?style=flat-square&labelColor=0d0d0d&label=tests" alt="Tests"/>
   <img src="https://img.shields.io/badge/zero-cc66ff?style=flat-square&labelColor=0d0d0d&label=cloud%20deps" alt="Cloud"/>
 </p>
 
@@ -36,14 +35,14 @@ short_description: Real-time security checkpoint & firewall for tool-using AI ag
 
 ## What is this
 
-Sohken is a **Hermes-inspired security companion** that sits between your AI agent and the real world. It intercepts every tool call, scans for prompt injection, enforces typed policies, and won't let anything dangerous through without your explicit cryptographic approval.
+Sohken is an independent, Hermes-inspired security tool. It checks local source folders for common risky patterns and can review a small set of typed agent actions sent through Sohken. It does not intercept every action an agent can take: tools used outside Sohken are outside its view and control.
 
 One local engine. Four interfaces. No model key or paid model is needed.
 
-The dashboard also includes a private **Cases** workspace: move a security finding from activity into an open, in-progress or resolved case, set priority and labels, then find it in a searchable list or status board. Cases remain on the device and are separated by account.
+The dashboard also includes a private **Cases** workspace. Cases and audit history stay on the device in this local alpha.
 
 ```
-Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──→ Execution ──→ Audit ledger
+Routed action ──→ Scanner ──→ Policy ──→ Approval gate ──→ Local fixture ──→ Audit ledger
                      │           │            │                │              │
                   injection?   allow?     human sign-off   local effect   hash chain
                   redaction    deny?      digest match     idempotent     HMAC verify
@@ -57,7 +56,7 @@ Agent request ──→ Scanner ──→ Policy ──→ Approval gate ──�
 <tr>
 <td width="65%">
 
-Every agent action passes through four layers before it touches anything:
+Only actions sent through Sohken's current integration pass through these checks. The real action adapters are still limited to local fixtures:
 
 1. **Scan** — heuristic detection for injection signals, credential leaks, social engineering patterns. Not ML, not a black box — explainable rules with severity scoring.
 
@@ -86,7 +85,7 @@ Every agent action passes through four layers before it touches anything:
 <tr>
 <td>
 
-Requires Node.js 24+. That's the entire dependency list.
+Requires Node.js 24+. Installing from source also installs the pinned development tools used for testing and desktop packaging.
 
 ```sh
 git clone https://github.com/MelkiZedekICT/sohken.1-manage.git
@@ -115,6 +114,14 @@ node bin/sohken.mjs export
 
 State lives in `~/.sohken` by default. Override with `--data-dir PATH` or `SOHKEN_HOME`.
 
+Run a local static code check on a project folder (read-only; never executes the project):
+
+```sh
+node bin/sohken.mjs audit project --path ./my-project
+```
+
+The dashboard's **Project check** runs the same audit on a folder on this computer. It checks a bounded set of source and configuration files for common patterns such as embedded credentials, dynamic code, unsafe shell use, and risky web settings. It is not a full code analyzer, does not check current dependency advisories, and cannot prove code is safe. Details: [project audit limits](docs/PROJECT_AUDIT.md).
+
 See [where data lives and how to publish downloads](docs/DATA_AND_DEPLOYMENT.md) before exposing a shared server.
 
 </td>
@@ -123,7 +130,7 @@ See [where data lives and how to publish downloads](docs/DATA_AND_DEPLOYMENT.md)
 <br/><br/><br/>
 <img src="download.jpg" width="120"/>
 <br/><br/>
-<sub><em>Ready to deploy.</em></sub>
+  <sub><em>Local alpha. Public service is not ready.</em></sub>
 <br/><br/><br/><br/><br/>
 <img src="chibi-gojo-happy.jpg" width="120"/>
 <br/><br/>
@@ -139,11 +146,11 @@ See [where data lives and how to publish downloads](docs/DATA_AND_DEPLOYMENT.md)
 
 The dashboard supports account creation and sign-in. Passwords are stored as salted scrypt hashes, sessions use HttpOnly cookies, and each account keeps a separate local history. The first account on an existing installation adopts its current history.
 
-Free includes text checks, reviews, the latest 25 activity entries, browser add-on, and terminal tool. Plus is ₹199/month and adds the full activity view, history export, and history integrity checks. Access turns on only after Sohken verifies a Razorpay subscription event. The public page in `web/` explains these plans and collects early-access interest; it does not charge visitors.
+The free local alpha includes text checks, local project pattern audits, optional npm advisory lookups, browser add-on, terminal tool and local history. Plus is planned at ₹199/month; paid access is not ready for customers. The static public page in `web/` collects no email and has no payment or account service. Its download links open GitHub Releases.
 
 For billing, create a ₹199 monthly INR plan in Razorpay and set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_PLAN_ID`, and `RAZORPAY_WEBHOOK_SECRET` on the server that receives customer requests. Point Razorpay's public HTTPS webhook to `/api/payments/razorpay/webhook` and subscribe it to subscription activation, charge, resume, pause, cancel, halt, and completion events. Never put merchant credentials in desktop builds, browser code, or checked-in files. For a hosted deployment set `SOHKEN_SECURE_COOKIES=true` and use HTTPS with persistent storage.
 
-This is an early account and billing layer. Email verification, password recovery, customer self-service cancellation, and hosted account access across separate desktop installations still need to be completed before a public paid launch.
+This is an early, local account layer. Email verification, hosted password recovery, customer deletion/export, self-service cancellation, and account access across separate installations are missing. Do not deploy the authenticated app API as a public customer service or accept payments.
 
 ---
 
@@ -153,7 +160,7 @@ This is an early account and billing layer. Email verification, password recover
 |---|---|---|
 | 🖥️ | **Desktop** | Electron 44 app with full dashboard. Extract portable ZIP → launch `Sohken.exe`. Unsigned, no auto-updates. |
 | 🌐 | **Browser Extension** | Chrome/Edge Manifest V3. Minimal permissions, explicit capture, local-only scan engine. Load unpacked from `extension/`. |
-| ⌨️ | **Terminal CLI** | `serve`, `scan`, `status`, `audit verify`, `export`. Direct Node execution or install from release tarball. |
+| ⌨️ | **Terminal CLI** | `serve`, `scan`, `audit project`, `audit verify`, `export`. Direct Node execution or install from release tarball. |
 | 🔌 | **MCP Protocol** | JSON-RPC stdio adapter for Hermes-compatible agents. TypeScript SDK included. See [`integration/`](integration/README.md). |
 
 ---

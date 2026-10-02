@@ -7,6 +7,7 @@ import { readFileSync, readdirSync, lstatSync, createReadStream } from 'node:fs'
 import { Engine, EngineError, initConfig, object } from './engine.mjs';
 import { AccountStore, parseCookies, sessionCookie, signatureMatches } from './accounts.mjs';
 import { CaseStore } from './cases.mjs';
+import { auditProject } from './project-audit.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export function parseStrictJSON(text) {
@@ -37,7 +38,7 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
     const billingReady = remoteMode && Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET && process.env.RAZORPAY_PLAN_ID && process.env.RAZORPAY_WEBHOOK_SECRET);
     const config = initConfig(dataDir), engine = new Engine({ dataDir, config }), accounts = new AccountStore(dataDir, engine), cases = new CaseStore(dataDir); let origin; const rate = new Map();
     const startedAt = Date.now();
-    const counters = { requests: 0, auth_failures: 0, rate_limited: 0, scans: 0, proposals: 0, approvals: 0, rejections: 0, executions: 0, errors: 0 };
+    const counters = { requests: 0, auth_failures: 0, rate_limited: 0, scans: 0, project_audits: 0, proposals: 0, approvals: 0, rejections: 0, executions: 0, errors: 0 };
     // Pre-auth connection-level rate limit: 60 failed auth attempts per minute per socket IP triggers a 30s lockout.
     // This fires before token comparison, blocking brute-force enumeration without leaking timing info.
     const connRate = new Map();
@@ -128,6 +129,17 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
             }
             if (req.method === 'POST' || req.method === 'PATCH') {
                 const input = await readBody(req);
+                if (p === '/api/project-audit') {
+                    owner(); object(input, ['path', 'onlineDependencies']);
+                    if (remoteMode) throw new EngineError('Project folder checks run only in the local Sohken app.', 403);
+                    if (input.onlineDependencies !== undefined && typeof input.onlineDependencies !== 'boolean') throw new EngineError('Choose whether to check public dependency advisories.', 400);
+                    try {
+                        const report = await auditProject(input.path, { onlineDependencies: input.onlineDependencies === true });
+                        requestEngine.tx(() => requestEngine.event('project.audit_completed', { fingerprint: report.fingerprint, files: report.filesScanned, dependencyVersions: report.dependencies.versionsFound, onlineCheck: report.onlineCheck, findings: report.findings.length, counts: report.counts }));
+                        counters.project_audits++;
+                        return json(res, 200, report);
+                    } catch (error) { if (error instanceof EngineError) throw error; throw new EngineError(error.message || 'The project could not be checked.', 400); }
+                }
                 if (p === '/api/cases' && req.method === 'POST') { accountOnly(); return json(res, 201, { case: cases.create(userSession.accountId, input) }); }
                 const caseMatch = /^\/api\/cases\/([a-f0-9-]{36})$/.exec(p);
                 if (caseMatch && req.method === 'PATCH') { accountOnly(); return json(res, 200, { case: cases.update(userSession.accountId, caseMatch[1], input) }); }

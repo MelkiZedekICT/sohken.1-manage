@@ -2,6 +2,19 @@
 
 All notable changes to Sohken are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.0-alpha.4] — 2026-10-02
+
+### Added
+
+- Full source download ZIP with the developer run guide and project files, excluding local data, dependency folders and ignored screenshots.
+- `HOW_TO_RUN.md` covering app startup, project checks, tests, browser add-on, MCP connection and Windows packaging.
+
+### Changed
+
+- Combined verification, tagged downloads and manual website publishing into one GitHub Actions workflow.
+- Desktop packaging now uses Electron's normal verified download cache instead of a project-local cache folder that is empty on a clean runner.
+- Grouped project images and source documents by purpose; refreshed the README and deployment notes.
+
 ## [0.1.0-alpha.2] — 2026-09-28
 
 ### Added

@@ -21,7 +21,7 @@ node bin/sohken.mjs account list
 node bin/sohken.mjs account reset-password --email you@example.com
 ```
 
-For the downloadable terminal bundle, install its `.tgz` file with `npm install --global .\sohken-security-0.1.0-alpha.3.tgz`, then run `sohken account list` or `sohken account reset-password --email you@example.com`. The desktop app and terminal command use `%USERPROFILE%\.sohken` by default. If `SOHKEN_HOME` was set or the server was started with `--data-dir`, pass that same location with `--data-dir PATH` to the command.
+For the downloadable terminal bundle, install its `.tgz` file with `npm install --global .\sohken-security-0.1.0-alpha.4.tgz`, then run `sohken account list` or `sohken account reset-password --email you@example.com`. The desktop app and terminal command use `%USERPROFILE%\.sohken` by default. If `SOHKEN_HOME` was set or the server was started with `--data-dir`, pass that same location with `--data-dir PATH` to the command.
 
 The reset asks for the new password twice without displaying it and signs out existing sessions for that account. For this workspace's development server, add `--data-dir C:\DeveloperFiles\Sohken\.sohken` to both commands. The reset works only for someone who can access the machine and its local data directory; it is not a hosted customer password-recovery flow.
 
@@ -39,8 +39,8 @@ After this change is pushed and the workflow appears on GitHub:
 2. From the reviewed commit, create and push the matching package tag:
 
    ```powershell
-   git tag v0.1.0-alpha.3
-   git push origin v0.1.0-alpha.3
+   git tag v0.1.0-alpha.4
+   git push origin v0.1.0-alpha.4
    ```
 
 3. Watch **Actions → Sohken checks, downloads and website**. When it passes, people can get the full source ZIP, desktop ZIP, terminal package, extension ZIP, and checksums from `https://github.com/MelkiZedekICT/sohken.1-manage/releases`.

@@ -1,6 +1,6 @@
 {
   "name": "sohken-security",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Local security companion for agents: desktop, extension, terminal and MCP",
   "type": "module",
   "engines": {

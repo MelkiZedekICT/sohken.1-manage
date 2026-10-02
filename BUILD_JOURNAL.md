@@ -125,3 +125,8 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 
 - The combined workflow on commit `072c477` completed successfully on Ubuntu and Windows. Dependency checks, all tests, and the SDK build passed in both jobs.
 - The earlier failed run `36745677919` failed at `npm test` on Ubuntu; its Windows test job was cancelled. The newer source fixes that test failure, and the combined run is green.
+## 2026-10-02 - Windows release packaging repair
+
+- The `v0.1.0-alpha.3` tag passed Ubuntu and Windows verification but its release job failed at `npm run package:desktop`. Inspection found that the builder forced Electron Packager to use `.cache/electron-distribution`; a clean GitHub runner has no ZIP there even after `npm ci`.
+- Removed that override so Electron Packager uses Electron's standard artifact cache and checksum validation. The local clean-cache retry reached the expected network download, which this sandbox blocks; the successful GitHub build for alpha.4 is the remaining end-to-end check.
+- Bumped the app and package to `0.1.0-alpha.4` so the failed public tag remains unchanged and the repaired package can be released under a new version.

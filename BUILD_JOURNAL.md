@@ -121,3 +121,7 @@ Append dated entries for changes and test evidence. Distinguish implemented, tes
 - Consolidated the former test, release and website workflows into `.github/workflows/sohken.yml`; manual runs choose verification or static-site publishing, while version tags publish download files after checks pass.
 - Added a full source ZIP to the release packaging step. It includes the developer run guide, filters ignored local files, and records SHA-256 checksums with the other downloads.
 - Verification: `npm test` passed 62/62 on this Windows workspace. Remote Actions logs are not accessible from the supplied screenshot, which only shows the Ubuntu job exiting with code 1; this cleanup does not claim to identify that historical failing step. The restricted local host cannot complete `npm audit` because it cannot reach the npm advisory endpoint.
+## 2026-10-02 - GitHub workflow verification follow-up
+
+- The combined workflow on commit `072c477` completed successfully on Ubuntu and Windows. Dependency checks, all tests, and the SDK build passed in both jobs.
+- The earlier failed run `36745677919` failed at `npm test` on Ubuntu; its Windows test job was cancelled. The newer source fixes that test failure, and the combined run is green.

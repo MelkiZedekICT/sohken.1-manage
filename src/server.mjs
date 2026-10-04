@@ -43,11 +43,14 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
     // This fires before token comparison, blocking brute-force enumeration without leaking timing info.
     const connRate = new Map();
     const authRate = new Map();
+    const ipRate = new Map();
+    const RATE_LIMIT_HOUR = parseInt(process.env.SOHKEN_RATE_LIMIT_HOUR) || 1000;
     function connLimit(ip) { const now = Date.now(); let b = connRate.get(ip); if (!b) { b = { window: now, failures: 0, locked: 0 }; connRate.set(ip, b); } if (now < b.locked) return false; if (now - b.window > 60000) { b.window = now; b.failures = 0; } return true; }
     function connFail(ip) { const b = connRate.get(ip); if (!b) return; if (++b.failures >= 60) { b.locked = Date.now() + 30000; b.failures = 0; } }
     function authLimit(key, max, interval) { const now = Date.now(); let b = authRate.get(key); if (!b || now >= b.expires) { b = { window: now, expires: now + interval, count: 0 }; authRate.set(key, b); } if (b.count >= max) throw new EngineError('Too many account requests. Please wait a little and try again.', 429); b.count++; }
+    function ipLimit(ip, max) { const now = Date.now(); let b = ipRate.get(ip); if (!b || now >= b.expires) { b = { expires: now + 3600000, count: 0 }; ipRate.set(ip, b); } if (b.count >= max) return false; b.count++; return true; }
     // Evict stale entries every 5 minutes to prevent memory growth on long-running instances.
-    const connEvict = setInterval(() => { const cutoff = Date.now() - 120000; for (const [ip, b] of connRate) if (b.window < cutoff && b.locked < Date.now()) connRate.delete(ip); for (const [key, b] of authRate) if (b.expires < Date.now()) authRate.delete(key); }, 300000); connEvict.unref();
+    const connEvict = setInterval(() => { const cutoff = Date.now() - 120000; for (const [ip, b] of connRate) if (b.window < cutoff && b.locked < Date.now()) connRate.delete(ip); for (const [key, b] of authRate) if (b.expires < Date.now()) authRate.delete(key); for (const [ip, b] of ipRate) if (b.expires < Date.now()) ipRate.delete(ip); }, 300000); connEvict.unref();
     function json(res, status, payload) { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(payload)); }
     const server = http.createServer(async (req, res) => {
         counters.requests++;
@@ -55,6 +58,7 @@ export async function startServer({ dataDir = process.env.SOHKEN_HOME || path.jo
         try {
             const remoteIp = process.env.SOHKEN_TRUST_PROXY === 'true' && typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : req.socket.remoteAddress || 'unknown';
             if (!connLimit(remoteIp)) { counters.rate_limited++; throw new EngineError('Too many failed attempts. Wait 30 seconds.', 429); }
+            if (!ipLimit(remoteIp, RATE_LIMIT_HOUR)) { counters.rate_limited++; throw new EngineError('Hourly rate limit exceeded.', 429); }
             if (req.headers.host !== new URL(origin).host) throw new EngineError('Host not permitted. Use the configured Sohken address.', 403);
             const url = new URL(req.url, origin), p = url.pathname; const requestOrigin = req.headers.origin;
             const extension = typeof requestOrigin === 'string' && /^chrome-extension:\/\/[a-p]{32}$/.test(requestOrigin);

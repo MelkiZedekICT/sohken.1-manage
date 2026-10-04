@@ -34,6 +34,8 @@ test('HTTP rejects ambiguous JSON and oversized input',async t=>{const s=await s
 test('denied data is not retained even when no secret pattern matches',t=>{const e=fixture(t);const value='Customer confidential proposal XYZ';const a=e.propose({tool:'network.send',args:{url:'https://example.invalid',body:value}});assert.equal(a.status,'denied');assert.ok(!JSON.stringify(e.export()).includes(value));});
 test('forged approval state in SQLite fails integrity verification',t=>{const e=fixture(t);const a=e.propose(ticket());a.status='approved';a.approvedDigest=a.digest;e.db.prepare('UPDATE actions SET data=? WHERE id=?').run(JSON.stringify(a),a.id);assert.throws(()=>e.execute(a.id),/integrity/);});
 test('local scan storage is bounded',t=>{const e=fixture(t);const stmt=e.db.prepare('INSERT INTO scans VALUES(?,?)');for(let i=0;i<1000;i++)stmt.run(String(i),'{}');assert.throws(()=>e.scan({text:'Hello'}),/capacity/);});
+test('HTTP health check returns status ok and version',async t=>{const s=await serverFixture(t);const res=await fetch(s.url+'/api/health');assert.equal(res.status,200);const body=await res.json();assert.equal(body.status,'ok');assert.equal(typeof body.version,'string');});
+
 
 // --- New: adversarial scanner tests for new rules ---
 

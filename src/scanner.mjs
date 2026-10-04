@@ -19,7 +19,9 @@ const rules = [
   // Markdown/image exfiltration: invisible image tags or markdown images pointing to attacker-controlled URLs with encoded data in the query string.
   { id:'markdown-exfiltration', severity:'high', title:'Markdown image exfiltration', pattern:/!\[(?:[^\]]{0,50})?\]\(\s*https?:\/\/[^)\s]{4,250}[?&][^)\s]*=[^)\s]{20,}/, detail:'A markdown image URL contains a long query parameter value. This pattern can exfiltrate data by encoding it in an image request to an attacker-controlled server. Inspect the URL before rendering.' },
   // Unicode homoglyph obfuscation: detects mixing of Latin with visually similar Cyrillic, Greek or fullwidth characters used to bypass keyword filters.
-  { id:'unicode-homoglyph', severity:'medium', title:'Unicode homoglyph obfuscation', pattern:/[Ѐ-ӿͰ-Ͽ！-～].*[a-zA-Z]|[a-zA-Z].*[Ѐ-ӿͰ-Ͽ！-～]/, detail:'Mixed Unicode scripts (Cyrillic, Greek, or fullwidth characters alongside Latin) can disguise keywords from text-based filters. This is a review signal, not proof of attack.' }
+  { id:'unicode-homoglyph', severity:'medium', title:'Unicode homoglyph obfuscation', pattern:/[Ѐ-ӿͰ-Ͽ！-～].*[a-zA-Z]|[a-zA-Z].*[Ѐ-ӿͰ-Ͽ！-～]/, detail:'Mixed Unicode scripts (Cyrillic, Greek, or fullwidth characters alongside Latin) can disguise keywords from text-based filters. This is a review signal, not proof of attack.' },
+  // Data URI exfiltration: large data URIs can be used to hide and exfiltrate data.
+  { id:'data-uri-exfiltration', severity:'high', title:'Data URI exfiltration', pattern:/data:[a-zA-Z0-9/+-]+;base64,[a-zA-Z0-9+/=]{100,}/, detail:'A large base64 data URI was detected. This can be used to conceal and exfiltrate information.' }
 ];
 
 export function redact(text) {

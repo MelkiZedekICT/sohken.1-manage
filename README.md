@@ -1,6 +1,10 @@
 # Sohken
 
+[![CI](https://github.com/MelkiZedekICT/sohken.1-manage/actions/workflows/sohken.yml/badge.svg)](https://github.com/MelkiZedekICT/sohken.1-manage/actions/workflows/sohken.yml)
+
 Sohken is a local security companion for developers using AI agents. The alpha can inspect supported project files for common risky patterns and review a limited set of typed actions routed through its local service. It cannot see or control tools an agent uses outside those integrations.
+
+**Live Website:** [https://MelkiZedekICT.github.io/sohken.1-manage/](https://MelkiZedekICT.github.io/sohken.1-manage/)
 
 **Status:** downloadable local alpha. The public site is static. There is no hosted user service or working checkout, and Plus at ₹199/month is a planned price only. No release is guaranteed to detect every vulnerability, and no software is non-hackable.
 

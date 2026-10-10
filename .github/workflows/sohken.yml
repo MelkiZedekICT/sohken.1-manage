@@ -1,5 +1,4 @@
 name: Sohken checks, downloads and website
-
 on:
   push:
     branches: [main]
@@ -55,12 +54,12 @@ jobs:
       - name: Publish downloadable files
         shell: powershell
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{github.token}}
         run: |
           $tag = $env:GITHUB_REF_NAME
           $assets = Get-ChildItem release -File | Where-Object { $_.Extension -in '.zip', '.tgz', '.json' }
           if (-not $assets) { throw 'No Sohken release files were built.' }
-          $ghArgs = @('release', 'create', $tag, '--generate-notes')
+          $ghArgs = @('release','create', $tag, '--generate-notes')
           if ($tag.Contains('-')) { $ghArgs += '--prerelease' }
           $ghArgs += $assets.FullName
           gh @ghArgs
